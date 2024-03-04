@@ -1,0 +1,24 @@
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Or desired height */
+  }
+  
+  .container-a {
+    width: 400px; /* Example value */
+    background-color: rgb(204, 198, 198); /* Or your desired background color */
+    padding: 20px; /* Adjust padding as needed */
+  }
+  
+  .form-floating input {
+    width: 300px; /* Custom width */
+  
+    /* Media query for smaller screens (example) */
+    @media (max-width: 768px) {
+      width: 80%;
+    }
+  }
+
+  
