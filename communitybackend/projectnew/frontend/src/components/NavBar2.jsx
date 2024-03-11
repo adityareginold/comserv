@@ -2,6 +2,11 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie';
+import Dropdown from 'react-bootstrap/Dropdown'
+
+
+
+
 
 const NavBar2 = () => {
     const [username, setUsername] = useState('')
@@ -36,20 +41,8 @@ const NavBar2 = () => {
                 <div class="container-fluid">
                     <Link class="navbar-brand" href="#">Community Service </Link>
                     <Link class="navbar-brand" href="#">Welcome {username} </Link>
-                    {/* <Dropdown>
-                        <Dropdown.Toggle variant="success" id="dropdown-basic">
-                            <img src={defaultProfilePic} alt="Profile" style={{width: '30px', height: '30px', borderRadius: '50%'}}/>
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                            <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
-                            <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
-                            <Dropdown.Item to= "/login"onClick={handleLogout}>Logout</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown> */}
-
-
                     
+
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>

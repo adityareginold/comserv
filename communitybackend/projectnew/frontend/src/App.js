@@ -20,10 +20,9 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/org' element={<Organization/>}/>
           <Route path='/db' element= { <Dashboard/>}/>
-
+          
         </Routes>
       </BrowserRouter>
-     
     </div>
   );
 }

@@ -1,49 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
-// const Organization = () => {
-//     const [input, setInput] = useState({
-//         "image": "",
-//         "title": "",
-//         "descr": "",
-//     });
 
-//     const inputHandler = (event) => {
-//         setInput({ ...input, [event.target.name]: event.target.value });
-//     }
-//     const fileInputChangeHandler = (event) => {
-//         setInput({ ...input, image: event.target.files[0] });
-//     }
-
-//     const readvalues = () => {
-//         const formData = new FormData();
-//         formData.append('image', input.image);
-//         formData.append('title', input.title);
-//         formData.append('descr', input.descr);
-
-//         axios.post("http://127.0.0.1:8000/imagesto/", formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data'
-//             }
-//         })
-//             .then((response) => {
-//                 console.log(response.data);
-//                 if (response.status === 201) {                                                                                                                                                              
-//                     alert("success");
-//                     setInput({
-//                         "image": "",
-//                         "title": "",
-//                         "descr": "",
-//                     });
-//                 } else {
-//                     alert("something went wrong");
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.error('Error', error);
-//                 alert("error occurred");
-//             });
-//     }
 const Organization = () => {
     const [input, setInput] = useState({
         "image": "",
@@ -123,7 +81,7 @@ const Organization = () => {
                             
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <div className="form-floating mb-3">
-                                    <label htmlFor="floatingImage" className='' >Upload Image</label>
+                                    <label htmlFor="floatingImage" className=''>Upload Image</label>
                                     <input type="file" className="form-control" id="floatingImage" name='image' onChange={fileInputChangeHandler} />
                                 </div>
                                 <div className="form-floating">

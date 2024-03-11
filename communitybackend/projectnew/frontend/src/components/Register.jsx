@@ -3,14 +3,18 @@ import NavBar from './NavBar'
 import axios from 'axios'
 
 
+
 const Register = () => {
     const [input, setInput] = useState([
         {
-            "uname": "",
+            "fname": "",
+            "lname": "",
             "phone": "",
-            "password": "",
-            "place": "",
             "email": "",
+            "address": "",
+            "interest": "",
+            "skills": "",
+            "image": "",
         }
     ])
     const inputHandler = (event) => {
@@ -26,11 +30,14 @@ const Register = () => {
                     alert("success")
                     setInput(
                         {
-                            "uname": "",
+                            "fname": "",
+                            "lname": "",
                             "phone": "",
-                            "password": "",
-                            "place": "",
                             "email": "",
+                            "address": "",
+                            "interest": "",
+                            "skills": "",
+                            "image": "",
                         }
                     )
 
@@ -45,43 +52,46 @@ const Register = () => {
             });
 
     }
-    
-
-
-
-
 
 
     return (
         <div>
-            <NavBar />
+            
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="" className="form-label">Username</label>
-                        <input type="text" className="form-control" name='uname' value={input.uname} onChange={inputHandler} />
+                        <label htmlFor="" className="form-label">First Name</label>
+                        <input type="text" className="form-control" name='fname' value={input.fname} onChange={inputHandler} />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="" className="form-label">Contact No</label>
+                        <label htmlFor="" className="form-label">Last Name</label>
+                        <input type="text" className="form-control" name='lname' value={input.lname} onChange={inputHandler} />
+                    </div>
+                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                        <label htmlFor="" className="form-label">Phone</label>
                         <input type="text" className="form-control" name='phone' value={input.phone} onChange={inputHandler} />
-                    </div>
-                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="" className="form-label">Place</label>
-                        <input type="text" className="form-control" name='place' value={input.place} onChange={inputHandler} />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                         <label htmlFor="" className="form-label">Email</label>
                         <input type="text" className="form-control" name='email' value={input.email} onChange={inputHandler} />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="" className="form-label">Password:</label>
-                        <input type="text" className="form-control" name='password' value={input.password} onChange={inputHandler} />
+                        <label htmlFor="" className="form-label">Address:</label>
+                        <input type="text" className="form-control" name='address' value={input.address} onChange={inputHandler} />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <button className="btn btn-dark" onClick={readvalues}>submit</button>
-
-
+                        <label htmlFor="" className="form-label">Interest:</label>
+                        <input type="text" className="form-control" name='interest' value={input.interest} onChange={inputHandler} />
                     </div>
+                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                        <label htmlFor="" className="form-label">Skills:</label>
+                        <input type="text" className="form-control" name='skills' value={input.skills} onChange={inputHandler} />
+                    </div>
+                    
+                    <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                        <button className="btn btn-dark" onClick={readvalues}>Update</button>
+                    </div>
+
                 </div>
             </div>
 

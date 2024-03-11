@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 
@@ -117,12 +118,21 @@ class LogoutView(APIView):
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
+        first_name = request.data.get('fname')
+        last_name = request.data.get('lname')
         username = request.data.get('username')
         password = request.data.get('password')
         email = request.data.get('email')
-        first_name = request.data.get('fname')
-        last_name = request.data.get('lname')
+
+        phone = request.data.get('phone')
+        address = request.data.get('address')
+        interest = request.data.get('interest')
+        skills = request.data.get('skills')
+        image = request.data.get('image')
         option = request.data.get('option')
+        
+
+
 
         if not (username and password and email and first_name and last_name and option):
             return JsonResponse({'error': 'Please provide all required fields'}, status=400)
@@ -131,7 +141,8 @@ def register(request):
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
         print(user.id)
         # Create UserProfile instance
-        UserProfile.objects.create(user_id=user.id, option=option)
+        UserProfile.objects.create(user_id=user.id, option=option, phone=phone, address=address, interest=interest, skills=skills, image=image )
+
 
         return JsonResponse({'success': 'User registered successfully'})
     else:
