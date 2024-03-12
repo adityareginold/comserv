@@ -15,12 +15,12 @@ Including another URLconf
 """
 
 from django.urls import path,include
-from core.views import  front,task,task_detail,ImageTextListView, ImageTextCreateView,get_username,LoginView, LogoutView, register,csrf_token
+from core.views import  front,task,task_detail,ImageTextListView, ImageTextCreateView,get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from django.views.generic import TemplateView
+# from django.views.generic import TemplateView
 
 
 
@@ -37,7 +37,9 @@ urlpatterns = [
     path('get_username/', get_username, name='get_username'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('csrf-token/', csrf_token, name='csrf_token'),
-    
+    path('profilepicture/', get_user_profile, name='get_user_profile'),
+    path('viewprofile/' ,userdetails , name = "userdetails"),
+     path('updateuser/', update_user, name='update_user'),
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

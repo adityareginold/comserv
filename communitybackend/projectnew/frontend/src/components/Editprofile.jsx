@@ -4,7 +4,7 @@ import axios from 'axios'
 
 
 
-const Register = () => {
+const Editprofile = () => {
     const [input, setInput] = useState([
         {
             "fname": "",
@@ -102,4 +102,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Editprofile

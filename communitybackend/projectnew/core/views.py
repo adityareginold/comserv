@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 
 
 
+
 # Get the CSRF token
 def csrf_token(request):
     csrf_token = get_token(request)
@@ -77,6 +78,16 @@ def get_username(request):
     username = request.user.username
     return JsonResponse({'username': username})
 
+# Get the profile picture of a user
+@login_required
+def get_user_profile(request):
+    user_id = request.user
+    try:
+        user_profile = UserProfile.objects.get(user_id=user_id)
+        profile_picture_url = user_profile.image.url if user_profile.image else None
+        return JsonResponse({'profile_picture_url': profile_picture_url})
+    except UserProfile.DoesNotExist:
+        return JsonResponse({'error': 'User profile not found'}, status=404)
 
 
 class ImageTextListView(APIView):
@@ -123,7 +134,6 @@ def register(request):
         username = request.data.get('username')
         password = request.data.get('password')
         email = request.data.get('email')
-
         phone = request.data.get('phone')
         address = request.data.get('address')
         interest = request.data.get('interest')
@@ -131,9 +141,6 @@ def register(request):
         image = request.data.get('image')
         option = request.data.get('option')
         
-
-
-
         if not (username and password and email and first_name and last_name and option):
             return JsonResponse({'error': 'Please provide all required fields'}, status=400)
 
@@ -148,7 +155,59 @@ def register(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@login_required    
+@api_view(['PUT'])
+def update_user(request):
+    if request.method == 'PUT':
+        user_id = request.data.get('user_id')
+        first_name = request.data.get('fname')
+        last_name = request.data.get('lname')
+        email = request.data.get('email')
+        phone = request.data.get('phone')
+        address = request.data.get('address')
+        interest = request.data.get('interest')
+        skills = request.data.get('skills')
+        # Update user using Django's default authentication system
+        user = User.objects.get(id=user_id)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
 
+        # Update UserProfile instance
+        profile = UserProfile.objects.get(user_id=user.id)
+        profile.phone = phone
+        profile.address = address
+        profile.interest = interest
+        profile.skills = skills
+        profile.save()
+
+        
+
+        return JsonResponse({'success': 'User updated successfully'})
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+
+@login_required
+@api_view(['GET'])
+def userdetails(request):
+    user_id = request.user.id
+    print(user_id)
+    user = User.objects.get(id=user_id)
+    user_profile = UserProfile.objects.get(user_id=user_id)
+
+    data = {
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'phone': user_profile.phone,
+        'address': user_profile.address,
+        'interest': user_profile.interest,
+        'skills': user_profile.skills,
+    }
+    return JsonResponse(data)
 
 
 @api_view(['DELETE'])
