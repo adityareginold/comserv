@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.urls import path,include
-from core.views import  front,task,task_detail,ImageTextListView, ImageTextCreateView,get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user
+from core.views import  ImageTextDetailView, front,task,task_detail,ImageTextListView, ImageTextCreateView,get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -39,7 +39,8 @@ urlpatterns = [
     path('csrf-token/', csrf_token, name='csrf_token'),
     path('profilepicture/', get_user_profile, name='get_user_profile'),
     path('viewprofile/' ,userdetails , name = "userdetails"),
-     path('updateuser/', update_user, name='update_user'),
+    path('updateuser/', update_user, name='update_user'),
+    path('imagetext/<int:id>/', ImageTextDetailView.as_view(), name='imagetext_detail'),
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

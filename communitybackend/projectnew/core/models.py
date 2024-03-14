@@ -32,6 +32,10 @@ class ImageText(models.Model):
     image = models.ImageField(upload_to="images/", blank=True, null=True)
     title = models.CharField(max_length=100)
     descr = models.CharField(max_length=200)
-    
+    objectives = models.CharField(max_length=200)
+    tasks = models.CharField(max_length=200)
+    skills = models.CharField(max_length=200)
+    experience = models.CharField(max_length=200)
+    contact = models.CharField(max_length=200)  
     def upload_to(instance, filename):
         return 'images/{filename}'.format(filename=filename)

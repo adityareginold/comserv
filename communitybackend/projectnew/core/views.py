@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TaskSerializer,ImageSerializer
+from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer
 from .models import ImageText, Task, UserProfile
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -11,8 +11,6 @@ from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
-
 
 
 # Get the CSRF token
@@ -29,7 +27,6 @@ def front (request):
 #registerdirecttodb
 @api_view(['GET','POST'])
 def task(request):
-
     if request.method == 'GET':
         task = Task.objects.all()
         serializer = TaskSerializer(task, many = True)
@@ -42,35 +39,6 @@ def task(request):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# @api_view(['GET','POST'])
-# def dashview(request):
-#     if request.method == 'GET':
-#         dashview = ImageText.objects.all()
-#         serializer = ImageSerializer(dashview, many =True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = ImageSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#         return Response(status=status.HTTP_201_CREATED)
-#     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
- 
-# class ImageList(APIView):
-#     def get(self, request):
-#         if request.session.get('user_id'):
-#             user_id = request.session.get('user_id')
-#             dashview = ImageText.objects.filter(user_id=user_id)
-#         else:
-#              dashview = ImageText.objects.none()  # Return an empty queryset if no user is authenticated
-#              serializer = ImageSerializer(dashview, many=True)
-#              return Response(serializer.data)
-
-#              from django.contrib.auth.models import User
-
-
 
 # Get the username of the currently authenticated user
 @login_required
@@ -90,11 +58,18 @@ def get_user_profile(request):
         return JsonResponse({'error': 'User profile not found'}, status=404)
 
 
+class ImageTextDetailView(APIView):
+    def get(self, request, id):
+        image_text = get_object_or_404(ImageText, id=id)
+        serializer = ImageSerializer(image_text)
+        return Response(serializer.data)
+
+
 class ImageTextListView(APIView):
     def get(self, request):
         dashview = ImageText.objects.all()
         serializer = ImageSerializer(dashview, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data) 
 
 
 class ImageTextCreateView(APIView):
@@ -155,7 +130,6 @@ def register(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-@login_required    
 @api_view(['PUT'])
 def update_user(request):
     if request.method == 'PUT':
@@ -167,6 +141,7 @@ def update_user(request):
         address = request.data.get('address')
         interest = request.data.get('interest')
         skills = request.data.get('skills')
+
         # Update user using Django's default authentication system
         user = User.objects.get(id=user_id)
         user.first_name = first_name
@@ -182,14 +157,19 @@ def update_user(request):
         profile.skills = skills
         profile.save()
 
-        
+        # Serialize the updated user and profile instances
+        user_serializer = UserSerializer(user)
+        profile_serializer = UserProfileSerializer(profile)
 
-        return JsonResponse({'success': 'User updated successfully'})
+        return JsonResponse({
+            'success': 'User updated successfully',
+            'user': user_serializer.data,
+            'profile': profile_serializer.data
+        })
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
-
+# Get the details of the currently authenticated user
 @login_required
 @api_view(['GET'])
 def userdetails(request):

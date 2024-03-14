@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import NavBar from './NavBar'
+import { Link } from 'react-router-dom'
 
 
 const Homepage = () => {
@@ -52,7 +53,6 @@ const Homepage = () => {
 
                             <div className="row g-3" >
                                 {
-
                                     data.map((value, index) => {
 
                                         return <div className="col col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3">
@@ -62,27 +62,18 @@ const Homepage = () => {
                                                 <div class="card-body">
                                                     <h5 class="card-title">{value.title}</h5>
                                                     <p class="card-text">{value.descr}</p>
-                                                    <a href="#" class="btn btn-primary">More details</a>
+                                                    <Link to={`/moredetails/${value.id}`} class="btn btn-primary">More details</Link>
                                                 </div>
                                             </div>
 
                                         </div>
-
-
                                     })
                                 }
-
-
-
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
-
-
         </div>
     )
 }

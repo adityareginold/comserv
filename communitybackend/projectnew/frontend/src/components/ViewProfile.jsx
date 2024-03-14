@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const ViewProfile = () => {
 
@@ -53,9 +54,8 @@ const ViewProfile = () => {
                   </tr>
                 </React.Fragment>
               </tbody>
-
             </table>
-            <button type="submit" onClick="/editprofile" className="btn btn-primary">Edit</button>
+            <Link to="/editprofile" className="btn btn-primary">Edit</Link>
           </div>
 
         </div>

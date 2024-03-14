@@ -11,7 +11,7 @@ const RegistrationForm = () => {
         fname: '',
         lname: '',
         option: '',
-        phone : '',
+        phone: '',
         address : '',
         interest : '',
         skills : '',
