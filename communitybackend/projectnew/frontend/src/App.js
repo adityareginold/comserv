@@ -7,6 +7,8 @@ import RegistrationForm from './components/RegistrationForm';
 import ViewProfile from './components/ViewProfile';
 import Editprofile from './components/EditProfile';
 import Moredetails from './components/Moredetails';
+import Map from './components/Map';
+// import { LoadScript } from '@react-google-maps/api';
 
 
 
@@ -25,6 +27,12 @@ function App() {
           <Route path='/viewuser' element= {<ViewProfile/>}/>\
           <Route path='/editprofile' element= {<Editprofile/>}/>
           <Route path='/moredetails/:id' element= {<Moredetails/>}/>
+          {/* <Route path='/getmap' element={
+            <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+              <Map />
+            </LoadScript>
+          }/> */}
+          <Route path='/getmap' element={<Map/>}/>
         </Routes>
       </BrowserRouter>
     </div>

@@ -11,6 +11,31 @@ from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+# from rest_framework import status
+# from .models import Location
+# from .serializers import LocationSerializer
+
+# @api_view(['GET', 'POST'])  # Specify allowed HTTP methods
+# def location_list_create(request):
+#     """
+#     List all locations or create a new location.
+
+#     GET requests return a list of all locations.
+#     POST requests create a new location.
+#     """
+
+#     if request.method == 'GET':
+#         locations = Location.objects.all()
+#         serializer = LocationSerializer(locations, many=True)
+#         return Response(serializer.data)
+#     elif request.method == 'POST':
+#         serializer = LocationSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     else:
+#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)  # Handle invalid methods
 
 
 # Get the CSRF token
@@ -200,4 +225,3 @@ def task_detail(request, pk):
     if request.method == 'DELETE':
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    

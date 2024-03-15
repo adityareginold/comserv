@@ -13,6 +13,15 @@
   }
 }
 
+
+.leaflet-container .leaflet-marker-icon {
+  background-image: url(images/marker-icon.png);
+}
+
+.leaflet-container .leaflet-marker-shadow {
+  background-image: url(images/marker-shadow.png);
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
