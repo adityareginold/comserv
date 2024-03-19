@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer
-from .models import ImageText, Task, UserProfile
+from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer
+from .models import ImageText, Task, UserProfile,Location
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.http import JsonResponse
@@ -11,31 +11,29 @@ from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-# from rest_framework import status
-# from .models import Location
-# from .serializers import LocationSerializer
 
-# @api_view(['GET', 'POST'])  # Specify allowed HTTP methods
-# def location_list_create(request):
-#     """
-#     List all locations or create a new location.
 
-#     GET requests return a list of all locations.
-#     POST requests create a new location.
-#     """
+@api_view(['GET', 'POST'])  # Specify allowed HTTP methods
+def createlocation(request):
+    """
+    List all locations or create a new location.
 
-#     if request.method == 'GET':
-#         locations = Location.objects.all()
-#         serializer = LocationSerializer(locations, many=True)
-#         return Response(serializer.data)
-#     elif request.method == 'POST':
-#         serializer = LocationSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)  # Handle invalid methods
+    GET requests return a list of all locations.
+    POST requests create a new location.
+    """
+
+    if request.method == 'GET':
+        locations = Location.objects.all()
+        serializer = LocationSerializer(locations, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = LocationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)  # Handle invalid methods
 
 
 # Get the CSRF token
@@ -213,6 +211,8 @@ def userdetails(request):
         'skills': user_profile.skills,
     }
     return JsonResponse(data)
+
+
 
 
 @api_view(['DELETE'])

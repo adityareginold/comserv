@@ -139,6 +139,9 @@ import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import Overlay from 'ol/Overlay';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+
 
 const Map = () => {
   const mapRef = useRef();
@@ -183,9 +186,27 @@ const Map = () => {
             zoom: 18,
           }),
         });
-        initialMap.on('click', function (event) {
+        //for showing the location
+        // initialMap.on('click', async function (event) {
+        //   const clickedCoords = event.coordinate;
+        //   setCurrentLocation(clickedCoords);
+        //   // Reverse geocoding
+        //   const lonLat = toLonLat(clickedCoords);
+        //   const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lon=${lonLat[0]}&lat=${lonLat[1]}`);
+        //   const data = await response.json();
+        //   setLocationName(data.display_name);
+        // });
+        initialMap.on('click', async function (event) {
           const clickedCoords = event.coordinate;
           setCurrentLocation(clickedCoords);
+
+          // Convert the coordinates to latitude and longitude
+          const lonLat = toLonLat(clickedCoords);
+          const lon = lonLat[0];
+          const lat = lonLat[1];
+
+          // Set the locationName state to a string that contains the latitude and longitude
+          setLocationName(`Latitude: ${lat.toFixed(2)}, Longitude: ${lon.toFixed(2)}`);
         });
         setMap(initialMap);
         setVectorSource(initialVectorSource);
@@ -211,13 +232,26 @@ const Map = () => {
   }, [currentLocation, map, vectorSource]);
 
   return (
-    <div style={{ height: '400px', width: '400px' }}>
-      <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
-      <div id="popup">{popupContent}</div>
-      <input type="text" onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
-      <button onClick={searchLocation}>Search</button>
+    <div className="container">
+      <div className="row g-3">
+        <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+          <div className="row g-3">
+            <div className="col col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+              <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
+            </div>
+            <div className="col col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+              <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>
+            </div>
+            <div style={{ height: '600px', width: '700px' }}>
+              <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
+              <div id="popup">{popupContent}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
+
 };
 
 export default Map;
