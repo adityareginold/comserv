@@ -1,23 +1,16 @@
 from rest_framework import serializers
-from .models import ImageText, Task, UserProfile,User
+from .models import ImageText, Task, UserProfile,User,Location
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 class TaskSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Task
 		fields ='__all__'
 
-		
 class ImageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ImageText
 		fields ='__all__'
-
-
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = UserProfile
-#         fields = '__all__'  # Adjust fields as needed
-
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,7 +19,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
-
     class Meta:
         model = User
-        fields = ['username', 'email', 'profile','first_name','last_name'],
+        fields = ['username', 'email', 'profile','first_name','last_name']
+
+class LocationSerializer(GeoFeatureModelSerializer):
+      class Meta:
+            model=Location
+            geo_field = 'point'
+            fields = ['id','name','point']
+

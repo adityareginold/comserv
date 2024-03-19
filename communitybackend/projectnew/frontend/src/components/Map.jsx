@@ -142,61 +142,59 @@ import Overlay from 'ol/Overlay';
 
 const Map = () => {
   const mapRef = useRef();
-  const [currentLocation, setCurrentLocation] = useState([0, 0]);
+  const [currentLocation, setCurrentLocation] = useState(null);
   const [popupContent, setPopupContent] = useState('');
+  const [locationName, setLocationName] = useState('');
+  const [map, setMap] = useState(null);
+  const [vectorSource, setVectorSource] = useState(null);
+
+  const searchLocation = async () => {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationName}`);
+    const data = await response.json();
+    if (data[0]) {
+      const coords = fromLonLat([parseFloat(data[0].lon), parseFloat(data[0].lat)]);
+      setCurrentLocation(coords);
+    }
+  };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const coords = fromLonLat([position.coords.longitude, position.coords.latitude]);
-      setCurrentLocation(coords);
-
-      const vectorSource = new VectorSource();
-      const vectorLayer = new VectorLayer({
-        source: vectorSource,
+    if (!currentLocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const coords = fromLonLat([position.coords.longitude, position.coords.latitude]);
+        setCurrentLocation(coords);
       });
+    } else {
+      if (!map) {
+        const initialVectorSource = new VectorSource();
+        const vectorLayer = new VectorLayer({
+          source: initialVectorSource,
+        });
 
-      const marker = new Feature({
-        geometry: new Point(coords),
-      });
-
-      marker.setStyle(
-        new Style({
-          image: new Icon({
-            src: 'https://openlayers.org/en/latest/examples/data/icon.png', // replace with your marker image
+        const initialMap = new MapX({
+          target: mapRef.current,
+          layers: [
+            new TileLayer({
+              source: new OSM(),
+            }),
+            vectorLayer,
+          ],
+          view: new View({
+            center: currentLocation,
+            zoom: 18,
           }),
-        })
-      );
-
-      vectorSource.addFeature(marker);
-
-      const popupElement = document.getElementById('popup');
-      const popup = new Overlay({
-        element: popupElement,
-        positioning: 'bottom-center',
-        stopEvent: false,
-        offset: [0, -50],
-      });
-
-      const map = new MapX({
-        target: mapRef.current,
-        layers: [
-          new TileLayer({
-            source: new OSM(),
-          }),
-          vectorLayer,
-        ],
-        view: new View({
-          center: coords,
-          zoom: 18,
-        }),
-        overlays: [popup],
-      });
-
-      map.on('click', function (event) {
-        vectorSource.clear(); // remove previous markers
+        });
+        initialMap.on('click', function (event) {
+          const clickedCoords = event.coordinate;
+          setCurrentLocation(clickedCoords);
+        });
+        setMap(initialMap);
+        setVectorSource(initialVectorSource);
+      } else {
+        map.getView().setCenter(currentLocation);
+        vectorSource.clear();
 
         const marker = new Feature({
-          geometry: new Point(event.coordinate),
+          geometry: new Point(currentLocation),
         });
 
         marker.setStyle(
@@ -208,21 +206,18 @@ const Map = () => {
         );
 
         vectorSource.addFeature(marker);
-
-        const coordinates = toLonLat(event.coordinate);
-        setPopupContent(`Lat: ${coordinates[1].toFixed(2)}, Lng: ${coordinates[0].toFixed(2)}`);
-        popup.setPosition(event.coordinate);
-      });
-    });
-  }, []);
+      }
+    }
+  }, [currentLocation, map, vectorSource]);
 
   return (
     <div style={{ height: '400px', width: '400px' }}>
       <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
       <div id="popup">{popupContent}</div>
+      <input type="text" onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
+      <button onClick={searchLocation}>Search</button>
     </div>
   );
 };
-
 
 export default Map;

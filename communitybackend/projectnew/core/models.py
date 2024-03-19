@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models
 
 # Create your models here.
 class Task(models.Model):
@@ -39,3 +40,11 @@ class ImageText(models.Model):
     contact = models.CharField(max_length=200)  
     def upload_to(instance, filename):
         return 'images/{filename}'.format(filename=filename)
+    
+
+class Location(models.Model):
+    name = models.CharField(max_length=200)
+    point = models.PointField() 
+
+    def __str__(self):
+        return self.name
