@@ -27,18 +27,16 @@ const NavBar = () => {
                                 <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/login">Login</Link>
                                 </li>
-                                {/* <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/org">sampleupload</Link>
-                                </li>
+                                {/* 
                                 <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/db">testdashboard</Link>
                                 </li> */}
                                 <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/register">Sign Up</Link>
                                 </li>
-                                <li class="nav-item">
+                                {/* <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/getmap">View map testing</Link>
-                                </li>
+                                </li> */}
                                 {/* <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/viewprofile">viewprofile</Link>
                                 </li> */}

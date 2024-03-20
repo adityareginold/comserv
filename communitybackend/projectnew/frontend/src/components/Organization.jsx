@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 import NavBar2 from './NavBar2';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
@@ -20,13 +19,16 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 
 const Organization = () => {
-
     const mapRef = useRef();
     const [currentLocation, setCurrentLocation] = useState(null);
     const [popupContent, setPopupContent] = useState('');
     const [locationName, setLocationName] = useState('');
     const [map, setMap] = useState(null);
     const [vectorSource, setVectorSource] = useState(null);
+    const [locationData, setLocationData] = useState({
+        "name": "",
+        "point": "",
+    });
 
     const searchLocation = async () => {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationName}`);
@@ -183,25 +185,26 @@ const Organization = () => {
                         "skills": "",
                         "experience": "",
                     });
-                    // const locationData = {
-                    //     "name": " ",  // Replace with actual location name
-                    //     "point": " ",  // Replace with actual point data
-                    // };
-                    // axios.post("http://127.0.0.1:8000/locations/", locationData, {
-                    //     headers: {
-                    //         'Content-Type': 'application/json',
-                    //         'X-CSRFToken': csrfToken // Include CSRF token in the headers
-                    //     }
-                    // })
-                        // .then((response) => {
-                        //     console.log(response.data);
-                        //     if (response.status === 201) {
-                        //         alert("Location added successfully");
-                        //     }
-                        // })
-                //         .catch((error) => {
-                //             console.error(error);
-                //         });
+
+                    axios.post("http://127.0.0.1:8000/locations/", locationData, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken // Include CSRF token in the headers
+                        }
+                    })
+                        .then((response) => {
+                            console.log(response.data);
+                            if (response.status === 201) {
+                                alert("Location added successfully");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
+
+
+
+
                 }
             })
             .catch((error) => {
@@ -254,12 +257,14 @@ const Organization = () => {
                                 <label htmlFor="" className="form-label">Contact no</label>
                                 <input type="text" className="form-control" name='contact' value={input.contact} onChange={inputHandler} />
                             </div>
-                            {/* <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                <input type="text" className="form-control" name='name' value={input.name} onChange={inputHandler} />
-                                <input type="text" className="form-control" name='point' value={input.point} onChange={inputHandler} />
-                                <label htmlFor="" className="form-label">Location</label>
-                                
-                            </div> */}
+                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                <label htmlFor="" className="form-label">Location Name</label>
+                                <input type="text" className="form-control" name='name' value={locationData.name} onChange={e => setLocationData({...locationData, name: e.target.value})} />
+                            </div>
+                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                <label htmlFor="" className="form-label">Point</label>
+                                <input type="text" className="form-control" name='point' value={locationData.point} onChange={e => setLocationData({...locationData, point: e.target.value})} />
+                            </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
                                 <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>

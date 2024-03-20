@@ -8,6 +8,7 @@ import '../design/toggle.css';
 
 
 const NavBar2 = () => {
+    
     const [username, setUsername] = useState('')
     const [profilePicture, setProfilePicture] = useState('');
 
@@ -19,9 +20,7 @@ const NavBar2 = () => {
     
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/profilepicture/").then
-        (response => {
-            setProfilePicture(response.data.profilePicture);
-        });
+        (response =>   setProfilePicture(response.data.profilePicture));
     }, []); 
     const handleLogout = () => {
         const csrftoken = Cookies.get('csrftoken');
@@ -46,11 +45,11 @@ const NavBar2 = () => {
 
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
-                    <Link class="navbar-brand" href="#">Community Service </Link>
-                    <Link class="navbar-brand" to="/viewuser">Edit Profile</Link>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <Link class="navbar-brand" href="#"><h5>CommunityService </h5></Link>
+                    <Link class="navbar-brand" href="#"><h5>Welcome {username}</h5> </Link>
+                    {/* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
-                    </button>
+                    </button> */}
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
@@ -76,7 +75,7 @@ const NavBar2 = () => {
                                 </li>
                             </ul>
                         </div> */}
-                        <Link class="navbar-brand" href="#">Welcome {username} </Link>
+                        
                     <Dropdown >
                     <Dropdown.Toggle className='dropdown-toggle' id="dropdown-basic">
                         <img src={profilePicture} style={{ borderRadius: '50%', height: '30px', width: '30px' ,border:'none'}} />
@@ -84,7 +83,9 @@ const NavBar2 = () => {
 
                     <Dropdown.Menu>
                         <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
+                        <Link to="/viewuser" className="dropdown-item">Profile</Link>
                         <Link to="/org" className="dropdown-item">Add Services</Link>
+                        
                     </Dropdown.Menu>
                 </Dropdown>
                     </div>

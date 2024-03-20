@@ -8,8 +8,8 @@ const RegistrationForm = () => {
         username: '',
         email: '',
         password: '',
-        fname: '',
-        lname: '',
+        first_name: '',
+        last_name: '',
         option: '',
         phone: '',
         address : '',
@@ -72,12 +72,12 @@ const RegistrationForm = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="row">
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="fname" className="form-label">First Name</label>
-                        <input type="text" className="form-control" id="fname" name="fname" value={formData.fname} onChange={handleChange} required />
+                        <label htmlFor="first_name" className="form-label">First Name</label>
+                        <input type="text" className="form-control" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                        <label htmlFor="lname" className="form-label">Last Name</label>
-                        <input type="text" className="form-control" id="lname" name="lname" value={formData.lname} onChange={handleChange} required />
+                        <label htmlFor="last_name" className="form-label">Last Name</label>
+                        <input type="text" className="form-control" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                         <label htmlFor="phone" className="form-label">Phone</label>

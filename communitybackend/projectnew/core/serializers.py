@@ -18,10 +18,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer()
+    profile = UserProfileSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['username', 'email', 'profile','first_name','last_name']
+        fields = ['id','username', 'email', 'profile','first_name','last_name']
 
 class LocationSerializer(GeoFeatureModelSerializer):
       class Meta:

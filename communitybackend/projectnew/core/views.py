@@ -11,6 +11,9 @@ from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+import logging
+
 
 
 @api_view(['GET', 'POST'])  # Specify allowed HTTP methods
@@ -127,8 +130,8 @@ class LogoutView(APIView):
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
-        first_name = request.data.get('fname')
-        last_name = request.data.get('lname')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
         username = request.data.get('username')
         password = request.data.get('password')
         email = request.data.get('email')
@@ -153,44 +156,55 @@ def register(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
+logger = logging.getLogger(__name__)
+@login_required
 @api_view(['PUT'])
 def update_user(request):
-    if request.method == 'PUT':
-        user_id = request.data.get('user_id')
-        first_name = request.data.get('fname')
-        last_name = request.data.get('lname')
-        email = request.data.get('email')
-        phone = request.data.get('phone')
-        address = request.data.get('address')
-        interest = request.data.get('interest')
-        skills = request.data.get('skills')
+    try:
+        if request.method == 'PUT':
+            user_id = request.user.id
+            logger.info('Updating user with id %s', user_id)
+            logger.info('Request data: %s', request.data)
+            first_name = request.data.get('first_name')
+            last_name = request.data.get('last_name')
+            email = request.data.get('email')
+            phone = request.data.get('phone')
+            address = request.data.get('address')
+            interest = request.data.get('interest')
+            skills = request.data.get('skills')
 
-        # Update user using Django's default authentication system
-        user = User.objects.get(id=user_id)
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
-        user.save()
+            # Update user using Django's default authentication system
+            user = User.objects.get(id=user_id)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
 
-        # Update UserProfile instance
-        profile = UserProfile.objects.get(user_id=user.id)
-        profile.phone = phone
-        profile.address = address
-        profile.interest = interest
-        profile.skills = skills
-        profile.save()
+            # Update UserProfile instance
+            profile = UserProfile.objects.get(user_id=user.id)
+            profile.phone = phone
+            profile.address = address
+            profile.interest = interest
+            profile.skills = skills
+            profile.save()
 
-        # Serialize the updated user and profile instances
-        user_serializer = UserSerializer(user)
-        profile_serializer = UserProfileSerializer(profile)
+            # Serialize the updated user and profile instances
+            user_serializer = UserSerializer(user)
+            profile_serializer = UserProfileSerializer(profile)
 
-        return JsonResponse({
-            'success': 'User updated successfully',
-            'user': user_serializer.data,
-            'profile': profile_serializer.data
-        })
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+            return JsonResponse({
+                'success': 'User updated successfully',
+                'user': user_serializer.data,
+                'profile': profile_serializer.data
+            })
+        else:
+            return JsonResponse({'error': 'Method not allowed'}, status=405)
+    except ObjectDoesNotExist as e:
+        return JsonResponse({'error': 'User or UserProfile does not exist'}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': str(e)}, status=500)
 
 # Get the details of the currently authenticated user
 @login_required
@@ -211,8 +225,6 @@ def userdetails(request):
         'skills': user_profile.skills,
     }
     return JsonResponse(data)
-
-
 
 
 @api_view(['DELETE'])

@@ -5,7 +5,7 @@ import Organization from './components/Organization';
 import Dashboard from './components/Dashboard';
 import RegistrationForm from './components/RegistrationForm';
 import ViewProfile from './components/ViewProfile';
-import Editprofile from './components/EditProfile';
+import Editprofile from './components/Editprofile';
 import Moredetails from './components/Moredetails';
 import Map from './components/Map';
 

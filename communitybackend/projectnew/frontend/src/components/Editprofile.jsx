@@ -14,13 +14,15 @@ const Editprofile = () => {
     })
     const [csrfToken, setCsrfToken] = useState("");
 
+    
+
     useEffect(() => {
         const fetchProfileAndCsrfToken = async () => {
             try {
                 const profileResponse = await axios.get("http://127.0.0.1:8000/viewprofile/");
                 setInput(profileResponse.data);
 
-                const csrfResponse = await axios.get("http://127.0.0.1:8000/csrf_token/");
+                const csrfResponse = await axios.get("http://127.0.0.1:8000/csrf-token/");
                 setCsrfToken(csrfResponse.data.csrfToken);
             } catch (error) {
                 console.error('Error', error);
