@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import logging
+from django.contrib.auth import get_user_model
 
 
 
@@ -108,13 +109,31 @@ class ImageTextCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# class LoginView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         username = request.data.get('username')
+#         password = request.data.get('password')
+#         user = authenticate(request, username=username, password=password)       
+#         if user is not None:
+#             login(request, user)            
+#             return Response({"detail": "Successfully logged in."})
+#         else:
+#             return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
+    
+ 
+
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
+        email = request.data.get('email')
         password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)       
-        if user is not None:
-            login(request, user)            
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user.check_password(password):
+            login(request, user)
             return Response({"detail": "Successfully logged in."})
         else:
             return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
@@ -141,6 +160,7 @@ def register(request):
         skills = request.data.get('skills')
         image = request.data.get('image')
         option = request.data.get('option')
+        organization_name = request.data.get('organization_name')
         
         if not (username and password and email and first_name and last_name and option):
             return JsonResponse({'error': 'Please provide all required fields'}, status=400)
@@ -149,8 +169,7 @@ def register(request):
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
         print(user.id)
         # Create UserProfile instance
-        UserProfile.objects.create(user_id=user.id, option=option, phone=phone, address=address, interest=interest, skills=skills, image=image )
-
+        UserProfile.objects.create(user_id=user.id, option=option, phone=phone, address=address, interest=interest, skills=skills, image=image , organization_name = organization_name)
 
         return JsonResponse({'success': 'User registered successfully'})
     else:

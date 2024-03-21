@@ -8,7 +8,7 @@ import '../design/toggle.css';
 
 
 const NavBar2 = () => {
-    
+
     const [username, setUsername] = useState('')
     const [profilePicture, setProfilePicture] = useState('');
 
@@ -17,7 +17,7 @@ const NavBar2 = () => {
             (response => setUsername(response.data.username));
     }, []);
 
-    
+   
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/profilepicture/").then
         (response =>   setProfilePicture(response.data.profilePicture));

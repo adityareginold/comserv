@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.urls import path,include
-from core.views import  ImageTextDetailView, front,task,task_detail,ImageTextListView,ImageTextCreateView
+from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView
 from core.views import get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user,createlocation
 from django.contrib import admin
 from django.conf import settings
@@ -28,8 +28,8 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', front, name = "front"),
-    path('task/' ,task , name = "task"),
-    path('task/<int:pk>/' ,task_detail , name = "detail"), 
+    # path('task/' ,task , name = "task"),
+    # path('task/<int:pk>/' ,task_detail , name = "detail"), 
     path('imagesfrom/', ImageTextListView.as_view()),
     path('imagesto/', ImageTextCreateView.as_view()),
     path('accounts/login/', LoginView.as_view(), name="login"),

@@ -8,8 +8,9 @@ import {useNavigate} from 'react-router-dom';
 
 
 const Login = () => {
-    const [username, setUsername] = useState('');
+    const [email,setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // const [username, setUsername] = useState('');
     const [csrfToken, setCsrfToken] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // const history = useHistory();
@@ -34,7 +35,7 @@ const Login = () => {
             const response = await axios.post(
                 'http://127.0.0.1:8000/accounts/login/',
                 {
-                    username: username,
+                    email: email,
                     password: password,
                 },
                 {
@@ -102,7 +103,7 @@ const Login = () => {
                                 <div>
                                     
                                     
-                                    <p>Welcome, {username}!</p>
+                                    {/* <p>Welcome, {username}!</p> */}
                                     <button onClick={handleLogout} className="btn btn-primary">
                                         Logout
                                     </button>
@@ -115,10 +116,10 @@ const Login = () => {
                                                 type="text"
                                                 className="form-control"
                                                 id="floatingInput"
-                                                placeholder="Username"
-                                                onChange={(e) => setUsername(e.target.value)}
+                                                placeholder="email"
+                                                onChange={(e) => setEmail(e.target.value)}
                                             />
-                                            <label htmlFor="floatingInput">Username</label>
+                                            <label htmlFor="floatingInput">Email</label>
                                         </div>
                                         <div className="form-floating">
                                             <input

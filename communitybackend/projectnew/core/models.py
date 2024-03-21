@@ -24,6 +24,7 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=200)
     skills = models.CharField(max_length=200)
     interest = models.CharField(max_length=200)
+    organization_name = models.CharField(max_length=200)
     image =models.ImageFieldimage = models.ImageField(upload_to="profilepicture/", blank=True, null=True)
     def upload_to(instance, filename):
         return 'profilepicture/{filename}'.format(filename=filename)
