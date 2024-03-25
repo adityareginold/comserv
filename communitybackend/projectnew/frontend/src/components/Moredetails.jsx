@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NavBar from './NavBar';
+import {API} from './config'
 
 const Moredetails = () => {
     const [data, setData] = useState(null);
@@ -13,7 +14,7 @@ const Moredetails = () => {
         // Fetch card details when component mounts
         const fetchCardDetails = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/imagetext/${id}/`);
+                const response = await axios.get(`${API}/imagetext/${id}/`);
                 console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
                 console.log(response.data);
                 setData(response.data);
@@ -59,6 +60,7 @@ const Moredetails = () => {
 
                                 </tbody>
                             </table>
+                            
                         </div>
                     </div>
                 </div>

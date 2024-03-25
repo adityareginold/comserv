@@ -64,6 +64,7 @@ const Homepage = () => {
                                                     <h5 class="card-title">{value.title}</h5>
                                                     <p class="card-text">{value.descr}</p>
                                                     <Link to={`/moredetails/${value.id}`} class="btn btn-primary">More details</Link>
+                                                    
                                                 </div>
                                             </div>
 

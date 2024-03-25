@@ -18,11 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','username', 'email', 'profile','first_name','last_name']
 
-# class ImageSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ImageText
-#         fields ='__all__'
-
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:

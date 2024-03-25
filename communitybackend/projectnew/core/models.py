@@ -42,6 +42,13 @@ class ImageText(models.Model):
     def upload_to(instance, filename):
         return 'images/{filename}'.format(filename=filename)
     
+class Participation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
+    def __str__(self):
+        return f'Registration for {self.user.username} on {self.image_text.title}'
+    
+    
 class Location(models.Model):
     name = models.CharField(max_length=200)
     point = models.PointField() 

@@ -112,11 +112,13 @@ WSGI_APPLICATION = 'projectnew.wsgi.application'
 # }
 
 
+#  'ENGINE': 'django.contrib.gis.db.backends.postgis',
+
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'communityservice',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',

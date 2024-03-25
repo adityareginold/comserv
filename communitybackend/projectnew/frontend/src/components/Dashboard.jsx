@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import NavBar from './NavBar'
 import NavBar2 from './NavBar2'
+import { Link } from 'react-router-dom'
 
 const Dashboard = () => {
     const [data, setData] = new useState([])
@@ -29,7 +30,7 @@ const Dashboard = () => {
                                                 <div class="card-body">
                                                     <h5 class="card-title">{value.title}</h5>
                                                     <p class="card-text">{value.descr}</p>
-                                                    <a href="#" class="btn btn-primary">More details</a>
+                                                    <Link to={`/moredetails/${value.id}`} class="btn btn-primary">More details</Link>
                                                 </div>
                                             </div>
                                 </div>
