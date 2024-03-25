@@ -116,7 +116,7 @@ WSGI_APPLICATION = 'projectnew.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'postgres',
+        'NAME': 'communityservice',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',

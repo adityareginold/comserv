@@ -163,6 +163,7 @@ const Organization = () => {
         formData.append('skills', input.skills);
         formData.append('experience', input.experience);
         formData.append('contact', input.contact);
+        
 
         const csrfToken = getCSRFToken();
         axios.post("http://127.0.0.1:8000/imagesto/", formData, {
@@ -257,21 +258,19 @@ const Organization = () => {
                                 <label htmlFor="" className="form-label">Contact no</label>
                                 <input type="text" className="form-control" name='contact' value={input.contact} onChange={inputHandler} />
                             </div>
-                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                            {/* <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Location Name</label>
                                 <input type="text" className="form-control" name='name' value={locationData.name} onChange={e => setLocationData({...locationData, name: e.target.value})} />
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Point</label>
                                 <input type="text" className="form-control" name='point' value={locationData.point} onChange={e => setLocationData({...locationData, point: e.target.value})} />
-                            </div>
+                            </div> */}
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
                                 <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>
                             </div>
-                            {/* <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                            
-                            </div> */}
+                        
                             <div style={{ height: '600px', width: '700px' }}>
                                 <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
                                 <div id="popup">{popupContent}</div>

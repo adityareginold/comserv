@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import Dropdown from 'react-bootstrap/Dropdown';
 import '../design/toggle.css';
+import {API} from './config';
 
 
 
@@ -11,9 +12,17 @@ const NavBar2 = () => {
 
     const [username, setUsername] = useState('')
     const [profilePicture, setProfilePicture] = useState('');
+    const [option, setOption] = useState('');
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/get_username/").then
+        axios.get("http://127.0.0.1:8000/get_option/").then
+            (response => setOption(response.data.option));
+    }, []);
+
+
+
+    useEffect(() => {
+        axios.get(`${API}/get_username/`).then
             (response => setUsername(response.data.username));
     }, []);
 
@@ -39,6 +48,8 @@ const NavBar2 = () => {
                     }
                 });
     }
+   
+   
 
     return (
         <div>
@@ -84,8 +95,8 @@ const NavBar2 = () => {
                     <Dropdown.Menu>
                         <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
                         <Link to="/viewuser" className="dropdown-item">Profile</Link>
-                        <Link to="/org" className="dropdown-item">Add Services</Link>
-                        
+                        {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
+                        {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
                     </Dropdown.Menu>
                 </Dropdown>
                     </div>

@@ -7,11 +7,6 @@ class TaskSerializer(serializers.ModelSerializer):
 		model = Task
 		fields ='__all__'
 
-class ImageSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = ImageText
-		fields ='__all__'
-
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -22,6 +17,23 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username', 'email', 'profile','first_name','last_name']
+
+# class ImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ImageText
+#         fields ='__all__'
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageText
+        fields = ('id', 'user_id', 'image', 'title', 'descr', 'objectives', 'tasks', 'skills', 'experience', 'contact')
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            return ImageText.objects.create(user=request.user, **validated_data)
+        raise serializers.ValidationError("User must be authenticated to create an ImageText object.")
 
 class LocationSerializer(GeoFeatureModelSerializer):
       class Meta:

@@ -73,6 +73,17 @@ def get_username(request):
     username = request.user.username
     return JsonResponse({'username': username})
 
+@login_required
+def get_option(request):
+    user_id = request.user.id
+    try:
+        user_profile = UserProfile.objects.get(user_id=user_id)
+        option = user_profile.option
+        return JsonResponse({'option': option})
+    except UserProfile.DoesNotExist:
+        return JsonResponse({'error': 'User profile not found'}, status=404)
+
+
 # Get the profile picture of a user
 @login_required
 def get_user_profile(request):
@@ -87,8 +98,8 @@ def get_user_profile(request):
 
 class ImageTextDetailView(APIView):
     def get(self, request, id):
-        image_text = get_object_or_404(ImageText, id=id)
-        serializer = ImageSerializer(image_text)
+        Services = get_object_or_404(ImageText, id=id)
+        serializer = ImageSerializer(Services)
         return Response(serializer.data)
 
 
@@ -102,10 +113,12 @@ class ImageTextListView(APIView):
 class ImageTextCreateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        serializer = ImageSerializer(data=request.data)
+        serializer = ImageSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
+            serializer.validated_data['user_id'] = request.user.id
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

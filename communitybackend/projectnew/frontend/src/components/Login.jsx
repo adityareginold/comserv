@@ -2,25 +2,26 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../design/center.css';
 import NavBar3 from './NavBar3';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { API } from './config';
 
 
 
 
 const Login = () => {
-    const [email,setEmail] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     // const [username, setUsername] = useState('');
     const [csrfToken, setCsrfToken] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // const history = useHistory();
     const navigate = useNavigate()
-    
+
     useEffect(() => {
         // Fetch CSRF token when component mounts
         async function fetchCsrfToken() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/csrf-token/');
+                const response = await axios.get(`${API}/csrf-token/`);
                 setCsrfToken(response.data.csrfToken);
             } catch (error) {
                 console.error('Failed to fetch CSRF token:', error);
@@ -33,7 +34,7 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/accounts/login/',
+                `${API}/accounts/login/`,
                 {
                     email: email,
                     password: password,
@@ -49,8 +50,8 @@ const Login = () => {
             setIsLoggedIn(true);
             // history.push('/db');
             navigate('/db')
-            
-            
+
+
             // Optionally, you can redirect the user to another page upon successful login
         } catch (error) {
             console.error('Login Error:', error);
@@ -59,18 +60,18 @@ const Login = () => {
         }
     };
 
-   
 
-     const handleLogout = async () => {
+
+    const handleLogout = async () => {
         try {
             // Fetch CSRF token
-            const csrfResponse = await fetch('http://127.0.0.1:8000/csrf-token/');
+            const csrfResponse = await fetch(`${API}/csrf-token/`);
             const csrfData = await csrfResponse.json();
             const csrfToken = csrfData.csrfToken;
-    
+
             // Send logout request
             const response = await axios.post(
-                'http://127.0.0.1:8000/accounts/logout/',
+                `${API}/accounts/logout/`,
                 {},
                 {
                     headers: {
@@ -81,7 +82,7 @@ const Login = () => {
             console.log('Logout Successful');
             window.alert('Logout successful!');
             setIsLoggedIn(false);
-           
+
             // Optionally, you can redirect the user to another page upon successful logout
         } catch (error) {
             console.error('Logout Error:', error);
@@ -89,20 +90,20 @@ const Login = () => {
             // Handle logout error, such as displaying an error message to the user
         }
     };
-   
+
 
     return (
         <div>
-           
+
             <div className="center-container">
                 <div className="container-a">
                     <div className="row">
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                             {isLoggedIn ? (
-                                
+
                                 <div>
-                                    
-                                    
+
+
                                     {/* <p>Welcome, {username}!</p> */}
                                     <button onClick={handleLogout} className="btn btn-primary">
                                         Logout

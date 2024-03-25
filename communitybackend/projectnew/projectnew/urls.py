@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.urls import path,include
-from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView
+from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView,get_option
 from core.views import get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user,createlocation
 from django.contrib import admin
 from django.conf import settings
@@ -36,6 +36,7 @@ urlpatterns = [
     path('accounts/logout/', LogoutView.as_view(), name="logout"),
     path('register/', register, name="register"),
     path('get_username/', get_username, name='get_username'),
+    path('get_option/',get_option,name='get_option'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('csrf-token/', csrf_token, name='csrf_token'),
     path('profilepicture/', get_user_profile, name='get_user_profile'),
@@ -43,6 +44,7 @@ urlpatterns = [
     path('updateuser/', update_user, name='update_user'),
     path('imagetext/<int:id>/', ImageTextDetailView.as_view(), name='imagetext_detail'),
     path('locations/', createlocation, name='createlocation'),
+    
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

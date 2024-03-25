@@ -2,12 +2,13 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import NavBar from './NavBar'
 import { Link } from 'react-router-dom'
+import {API} from './config'
 
 
 const Homepage = () => {
     const [data, setData] = new useState([])
     const getData = () => {
-        axios.get("http://127.0.0.1:8000/imagesfrom/").then(
+        axios.get(`${API}/imagesfrom/`).then(
             (response) => { setData(response.data) }
         )
     }

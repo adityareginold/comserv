@@ -69,7 +69,7 @@ const RegistrationForm = () => {
         <div>
             <NavBar />
             <div className="container">
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="row g-3" >
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -101,18 +101,32 @@ const RegistrationForm = () => {
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Interest:</label>
                                     <input type="text" className="form-control" name='interest' value={formData.interest} onChange={handleChange} />
+
+
+
                                 </div>
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Skills:</label>
-                                    <input type="text" className="form-control" name='skills' value={formData.skills} onChange={handleChange} />
+
+
+                                    <select className="form-control" id="skills" name="skills" value={formData.skills} onChange={handleChange} required>
+                                        <option value="Mentoring">Mentoring</option>
+                                        <option value="Child Care">Child Care</option>
+                                        <option value="Medical Support">Medical Support</option>
+                                        <option value="Environmentalist">Environmentalist</option>
+
+
+                                    </select>
+
+
                                 </div>
                             </>
                         )}
                         {formData.option !== 'Volunteer' && (<>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-                                    <label htmlFor="" className="form-label">Organization Name:</label>
-                                    <input type="text" className="form-control" name='organization_name' value={formData.organization_name} onChange={handleChange} />
-                                </div>
+                                <label htmlFor="" className="form-label">Organization Name:</label>
+                                <input type="text" className="form-control" name='organization_name' value={formData.organization_name} onChange={handleChange} />
+                            </div>
                         </>)}
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="" className='form-label' >Upload Image</label>

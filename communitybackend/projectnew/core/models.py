@@ -14,7 +14,6 @@ class Task(models.Model):
     image =models.ImageFieldimage = models.ImageField(upload_to="profilepicture/", blank=True, null=True)
     def __str__(self):
       return self.fname
-    
 
 
 class UserProfile(models.Model):
@@ -31,6 +30,7 @@ class UserProfile(models.Model):
     # ... (other relevant fields)
 
 class ImageText(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/", blank=True, null=True)
     title = models.CharField(max_length=100)
     descr = models.CharField(max_length=200)
@@ -42,7 +42,6 @@ class ImageText(models.Model):
     def upload_to(instance, filename):
         return 'images/{filename}'.format(filename=filename)
     
-
 class Location(models.Model):
     name = models.CharField(max_length=200)
     point = models.PointField() 
