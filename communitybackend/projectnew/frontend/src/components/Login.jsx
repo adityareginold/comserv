@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { API } from './config';
 
 
-
-
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -102,8 +100,6 @@ const Login = () => {
                             {isLoggedIn ? (
 
                                 <div>
-
-
                                     {/* <p>Welcome, {username}!</p> */}
                                     <button onClick={handleLogout} className="btn btn-primary">
                                         Logout

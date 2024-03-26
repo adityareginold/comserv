@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from './NavBar';
 import Organization from './Organization';
+import { API } from './config';
 
 const RegistrationForm = () => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         password: '',
+        confirm_password: '',
         first_name: '',
         last_name: '',
         option: '',
@@ -18,6 +20,7 @@ const RegistrationForm = () => {
         image: '',
         organization_name: '',
     });
+    const [passwordError, setPasswordError] = useState('');
     const [csrfToken, setCSRFToken] = useState('');
 
     useEffect(() => {
@@ -47,10 +50,19 @@ const RegistrationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (formData.password !== formData.confirm_password) {
+            setPasswordError('Passwords do not match');
+            console.error('Passwords do not match');
+            return;
+        }
+        setPasswordError('');
+        const dataToSend = { ...formData };
+        delete dataToSend.confirm_password;
+
         const data = new FormData();
         Object.keys(formData).forEach(key => data.append(key, formData[key]));
         try {
-            const response = await axios.post('http://127.0.0.1:8000/register/', formData, {
+            const response = await axios.post( `${API}/register/`, formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                     'Content-Type': 'multipart/form-data',
@@ -101,9 +113,6 @@ const RegistrationForm = () => {
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Interest:</label>
                                     <input type="text" className="form-control" name='interest' value={formData.interest} onChange={handleChange} />
-
-
-
                                 </div>
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Skills:</label>
@@ -114,11 +123,7 @@ const RegistrationForm = () => {
                                         <option value="Child Care">Child Care</option>
                                         <option value="Medical Support">Medical Support</option>
                                         <option value="Environmentalist">Environmentalist</option>
-
-
                                     </select>
-
-
                                 </div>
                             </>
                         )}
@@ -132,8 +137,6 @@ const RegistrationForm = () => {
                             <label htmlFor="" className='form-label' >Upload Image</label>
                             <input type="file" className="form-control" name='image' onChange={fileInputChangeHandler} />
                         </div>
-
-
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="email" className="form-label">Email</label>
                             <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -145,6 +148,11 @@ const RegistrationForm = () => {
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="password" className="form-label">Password</label>
                             <input type="password" className="form-control" id="password" name="password" value={formData.password} onChange={handleChange} required />
+                        </div>
+                        <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                            <label htmlFor="confirm_password" className="form-label">Confirm Password</label>
+                            <input type="password" className="form-control" id="confirm_password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required />
+                            {passwordError && <div className="error">{passwordError}</div>}
                         </div>
                         <div className="col col-12 col-sm-12 col-md-12 col-lg-6 col-xl-12 col-xxl-12">
                             <button type="submit" className="btn btn-dark">Register</button>

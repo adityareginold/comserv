@@ -16,6 +16,7 @@ import Icon from 'ol/style/Icon';
 import Overlay from 'ol/Overlay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { API } from './config';
 
 
 const Organization = () => {
@@ -28,7 +29,7 @@ const Organization = () => {
     const [locationData, setLocationData] = useState({
         "name": "",
         "point": "",
-    });
+    });  
 
     const searchLocation = async () => {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationName}`);
@@ -135,7 +136,7 @@ const Organization = () => {
         // Fetch CSRF token when component mounts
         const fetchCsrfToken = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/csrf-token/');
+                const response = await axios.get(`${API}/csrf-token/`);
                 setCsrfToken(response.data.csrfToken);
             } catch (error) {
                 console.error('Failed to fetch CSRF token:', error);
@@ -166,7 +167,7 @@ const Organization = () => {
         
 
         const csrfToken = getCSRFToken();
-        axios.post("http://127.0.0.1:8000/imagesto/", formData, {
+        axios.post(`${API}/imagesto/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'X-CSRFToken': csrfToken // Include CSRF token in the headers
@@ -187,7 +188,7 @@ const Organization = () => {
                         "experience": "",
                     });
 
-                    axios.post("http://127.0.0.1:8000/locations/", locationData, {
+                    axios.post(`${API}/locations/`, locationData, {
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': csrfToken // Include CSRF token in the headers
@@ -202,10 +203,6 @@ const Organization = () => {
                         .catch((error) => {
                             console.error(error);
                         });
-
-
-
-
                 }
             })
             .catch((error) => {
@@ -258,14 +255,14 @@ const Organization = () => {
                                 <label htmlFor="" className="form-label">Contact no</label>
                                 <input type="text" className="form-control" name='contact' value={input.contact} onChange={inputHandler} />
                             </div>
-                            {/* <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Location Name</label>
                                 <input type="text" className="form-control" name='name' value={locationData.name} onChange={e => setLocationData({...locationData, name: e.target.value})} />
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Point</label>
                                 <input type="text" className="form-control" name='point' value={locationData.point} onChange={e => setLocationData({...locationData, point: e.target.value})} />
-                            </div> */}
+                            </div> 
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
                                 <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>

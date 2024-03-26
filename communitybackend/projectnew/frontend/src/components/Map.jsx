@@ -141,6 +141,7 @@ import Icon from 'ol/style/Icon';
 import Overlay from 'ol/Overlay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import {API} from './config'
 
 
 const Map = () => {

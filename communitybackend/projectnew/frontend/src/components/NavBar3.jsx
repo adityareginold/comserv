@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { API } from './config';
 
 const NavBar3 = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

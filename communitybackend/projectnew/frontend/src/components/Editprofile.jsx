@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import NavBar from './NavBar'
 import axios from 'axios'
+import {API} from './config'
 
 const Editprofile = () => {
     const [input, setInput] = useState({
@@ -19,10 +20,10 @@ const Editprofile = () => {
     useEffect(() => {
         const fetchProfileAndCsrfToken = async () => {
             try {
-                const profileResponse = await axios.get("http://127.0.0.1:8000/viewprofile/");
+                const profileResponse = await axios.get(`${API}/viewprofile/`);
                 setInput(profileResponse.data);
 
-                const csrfResponse = await axios.get("http://127.0.0.1:8000/csrf-token/");
+                const csrfResponse = await axios.get(`${API}/csrf-token/`);
                 setCsrfToken(csrfResponse.data.csrfToken);
             } catch (error) {
                 console.error('Error', error);
@@ -46,7 +47,7 @@ const Editprofile = () => {
         formData.append('address', input.address);
         formData.append('interest', input.interest);
         formData.append('skills', input.skills);
-        axios.put("http://127.0.0.1:8000/updateuser/", formData, {
+        axios.put(`${API}/updateuser/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'X-CSRFToken': csrfToken

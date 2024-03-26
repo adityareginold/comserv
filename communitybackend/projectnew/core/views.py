@@ -17,27 +17,22 @@ from django.contrib.auth import get_user_model
 
 
 
-@api_view(['GET', 'POST'])  # Specify allowed HTTP methods
+@api_view(['GET', 'POST'])
 def createlocation(request):
-    """
-    List all locations or create a new location.
-
-    GET requests return a list of all locations.
-    POST requests create a new location.
-    """
-
     if request.method == 'GET':
         locations = Location.objects.all()
         serializer = LocationSerializer(locations, many=True)
         return Response(serializer.data)
+
     elif request.method == 'POST':
-        serializer = LocationSerializer(data=request.data)
+        serializer = LocationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     else:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)  # Handle invalid methods
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 # Get the CSRF token
@@ -238,6 +233,56 @@ def update_user(request):
         print(e)
         return JsonResponse({'error': str(e)}, status=500)
 
+
+
+@login_required
+@api_view(['PUT'])
+def update_services(request, pk):
+    try:
+        if request.method == 'PUT':
+            logger.info('Updating ImageText with id %s', pk)
+            logger.info('Request data: %s', request.data)
+
+            # Get the fields from the request
+            title = request.data.get('title')
+            descr = request.data.get('descr')
+            contact = request.data.get('contact')
+            tasks = request.data.get('tasks')
+            objectives = request.data.get('objectives')
+            skills = request.data.get('skills')
+            experience = request.data.get('experience')
+            image = request.data.get('image')
+
+            # Get the ImageText instance and update its fields
+            image_text = ImageText.objects.get(pk=pk)
+            image_text.title = title
+            image_text.descr = descr
+            image_text.contact = contact
+            image_text.tasks = tasks
+            image_text.objectives = objectives
+            image_text.skills = skills
+            image_text.experience = experience
+            image_text.image = image
+            image_text.save()
+
+            # Serialize the updated ImageText instance
+            serializer = ImageSerializer(image_text)
+
+            return JsonResponse({
+                'success': 'ImageText updated successfully',
+                'image_text': serializer.data
+            })
+        else:
+            return JsonResponse({'error': 'Method not allowed'}, status=405)
+    except ObjectDoesNotExist as e:
+        return JsonResponse({'error': 'ImageText does not exist'}, status=404)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+
 # Get the details of the currently authenticated user
 @login_required
 @api_view(['GET'])
@@ -257,6 +302,15 @@ def userdetails(request):
         'skills': user_profile.skills,
     }
     return JsonResponse(data)
+
+
+@login_required
+@api_view(['GET'])
+def view_services(request):
+    user_id = request.user.id
+    image_texts = ImageText.objects.filter(user_id=user_id)
+    serializer = ImageSerializer(image_texts, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['DELETE'])

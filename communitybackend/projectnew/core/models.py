@@ -52,7 +52,7 @@ class Participation(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=200)
     point = models.PointField() 
-    image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE, null=True, blank=True)
+    image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

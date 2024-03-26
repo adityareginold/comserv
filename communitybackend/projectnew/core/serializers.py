@@ -18,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','username', 'email', 'profile','first_name','last_name']
 
-
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageText
@@ -29,11 +28,11 @@ class ImageSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user"):
             return ImageText.objects.create(user=request.user, **validated_data)
         raise serializers.ValidationError("User must be authenticated to create an ImageText object.")
+    
 
 class LocationSerializer(GeoFeatureModelSerializer):
-      class Meta:
-            model=Location
-            geo_field = 'point'
-            fields = '__all__'
-            # fields = ['id','name','point']
-
+    image_text_id = serializers.PrimaryKeyRelatedField(source='image_text', queryset=ImageText.objects.all())
+    class Meta:
+        model = Location
+        geo_field = 'point'
+        fields = ('id', 'name', 'point', 'image_text_id')

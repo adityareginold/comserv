@@ -8,6 +8,7 @@ import ViewProfile from './components/ViewProfile';
 import Editprofile from './components/Editprofile';
 import Moredetails from './components/Moredetails';
 import Map from './components/Map';
+import Services from './components/Services';
 
 // import { LoadScript } from '@react-google-maps/api';
 
@@ -34,6 +35,7 @@ function App() {
           }/> */}
             <Route path='/org' element={<Organization />} />
             <Route path='/getmap' element={<Map />} />
+            <Route path='/viewservices' element={<Services/>}/>
          
         </Routes>
       </BrowserRouter>

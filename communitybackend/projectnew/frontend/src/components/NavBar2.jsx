@@ -15,7 +15,7 @@ const NavBar2 = () => {
     const [option, setOption] = useState('');
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/get_option/").then
+        axios.get(`${API}/get_option/`).then
             (response => setOption(response.data.option));
     }, []);
 
@@ -28,12 +28,12 @@ const NavBar2 = () => {
 
    
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/profilepicture/").then
+        axios.get(`${API}/profilepicture/`).then
         (response =>   setProfilePicture(response.data.profilePicture));
     }, []); 
     const handleLogout = () => {
         const csrftoken = Cookies.get('csrftoken');
-        axios.post("http://127.0.0.1:8000/accounts/logout/", {}, {
+        axios.post(`${API}/accounts/logout/`, {}, {
             headers: {
                 'X-CSRFToken': csrftoken
             }
@@ -97,6 +97,8 @@ const NavBar2 = () => {
                         <Link to="/viewuser" className="dropdown-item">Profile</Link>
                         {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
                         {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
+                        {option === 'Organization' && <Link to="/viewservices" className="dropdown-item">View Services</Link>}
+
                     </Dropdown.Menu>
                 </Dropdown>
                     </div>

@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.urls import path,include
-from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView,get_option
+from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView,get_option,view_services,update_services
 from core.views import get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user,createlocation
 from django.contrib import admin
 from django.conf import settings
@@ -44,6 +44,8 @@ urlpatterns = [
     path('updateuser/', update_user, name='update_user'),
     path('imagetext/<int:id>/', ImageTextDetailView.as_view(), name='imagetext_detail'),
     path('locations/', createlocation, name='createlocation'),
+    path('view_services/',view_services, name= 'view_services'),
+    path('update_services/<int:pk>/',update_services, name= 'update_services'),
     
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

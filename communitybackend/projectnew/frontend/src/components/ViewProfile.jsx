@@ -1,12 +1,14 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { API } from './config'
+
 
 const ViewProfile = () => {
 
   const [data, setData] = useState([])
   const getData = () => {
-    axios.get("http://127.0.0.1:8000/viewprofile/")
+    axios.get(`${API}/viewprofile/`)
       .then((response) => {
         setData(response.data);
         console.log(response.data);
