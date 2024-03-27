@@ -47,20 +47,20 @@ def front (request):
     return render(request, 'index.html', context)
 
 #registerdirecttodb
-@api_view(['GET','POST'])
-def task(request):
-    if request.method == 'GET':
-        task = Task.objects.all()
-        serializer = TaskSerializer(task, many = True)
-        return Response(serializer.data)
+# @api_view(['GET','POST'])
+# def task(request):
+#     if request.method == 'GET':
+#         task = Task.objects.all()
+#         serializer = TaskSerializer(task, many = True)
+#         return Response(serializer.data)
 
 
-    elif request.method == 'POST':
-        serializer = TaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method == 'POST':
+#         serializer = TaskSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Get the username of the currently authenticated user
 @login_required
@@ -68,6 +68,7 @@ def get_username(request):
     username = request.user.username
     return JsonResponse({'username': username})
 
+#Get the option volunteer or organization
 @login_required
 def get_option(request):
     user_id = request.user.id
@@ -91,20 +92,21 @@ def get_user_profile(request):
         return JsonResponse({'error': 'User profile not found'}, status=404)
 
 
+# more details of the services
 class ImageTextDetailView(APIView):
     def get(self, request, id):
         Services = get_object_or_404(ImageText, id=id)
         serializer = ImageSerializer(Services)
         return Response(serializer.data)
 
-
+# View the services in cards
 class ImageTextListView(APIView):
     def get(self, request):
         dashview = ImageText.objects.all()
         serializer = ImageSerializer(dashview, many=True)
         return Response(serializer.data) 
 
-
+# Create new services
 class ImageTextCreateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
@@ -116,7 +118,7 @@ class ImageTextCreateView(APIView):
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#login using username and password
 # class LoginView(APIView):
 #     def post(self, request, *args, **kwargs):
 #         username = request.data.get('username')
@@ -129,7 +131,7 @@ class ImageTextCreateView(APIView):
 #             return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
     
  
-
+#login using email and password
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -153,7 +155,7 @@ class LogoutView(APIView):
         return Response({"detail": "Successfully logged out."})
     
    
-
+# Django Default authentication system with additional fields
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
@@ -183,7 +185,7 @@ def register(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
+#update user details
 logger = logging.getLogger(__name__)
 @login_required
 @api_view(['PUT'])
@@ -234,7 +236,7 @@ def update_user(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-
+# Update the services
 @login_required
 @api_view(['PUT'])
 def update_services(request, pk):
@@ -303,7 +305,7 @@ def userdetails(request):
     }
     return JsonResponse(data)
 
-
+#View the services of the currenltly authenticated user
 @login_required
 @api_view(['GET'])
 def view_services(request):
@@ -313,13 +315,17 @@ def view_services(request):
     return Response(serializer.data)
 
 
+
+# Delete the services
 @api_view(['DELETE'])
-def task_detail(request, pk):
+def delete_service(request, pk):
     try:
-        task = Task.objects.get(pk=pk)
-    except Task.DoesNotExist:
+        image_text = get_object_or_404(ImageText, pk=pk)
+    except ImageText.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     if request.method == 'DELETE':
-        task.delete()
+        image_text.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+

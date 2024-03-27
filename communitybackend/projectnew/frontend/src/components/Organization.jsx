@@ -267,7 +267,6 @@ const Organization = () => {
                                 <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
                                 <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>
                             </div>
-                        
                             <div style={{ height: '600px', width: '700px' }}>
                                 <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
                                 <div id="popup">{popupContent}</div>

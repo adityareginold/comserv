@@ -34,19 +34,36 @@ const Services = () => {
     const handleSave = (id) => {
         axios.put(`${API}/update_services/${id}/`, formData)
             .then(response => {
-                console.log('Response data:' ,response.data);
+                console.log('Response data:', response.data);
+               
                 // Update the local data with the response
                 const updatedData = data.map(item =>
-                    item.id === id ? response.data : item
+                    item.id === id ? response.data.image_text : item
                 );
                 setData(updatedData);
-                setFormData(response.data)
                 setEditingId(null);
             })
             .catch(error => {
                 console.error('Error updating data: ', error);
             });
     }
+    const handleDelete = (id) => {
+        axios.delete(`${API}/delete_service/${id}/`)
+            .then(response => {
+                console.log('Response data:', response.data);
+                
+                // Filter out the deleted item
+                const updatedData = data.filter(item => item.id !== id);
+                setData(updatedData);
+            })
+            .catch(error => {
+                console.error('Error deleting data: ', error);
+            });
+    }
+
+    useEffect(() => {
+        console.log('Data has been updated:', data);
+    }, [data]);
     useEffect(() => { getData(); }, [])
     return (
         <div>
@@ -55,7 +72,7 @@ const Services = () => {
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                         <table className="table table-dark table-hover">
                             <tbody>
-                                <React.Fragment>
+                               
                                     <thead>
                                         <tr>
                                             <th scope="col">Title</th>
@@ -75,7 +92,7 @@ const Services = () => {
                                                     return (
 
                                                         <tr>
-                                                         
+
                                                             <td><input type="text" className="form-control" name="title" value={formData.title} onChange={handleInputChange} /></td>
                                                             <td><input type="text" className="form-control" name="descr" value={formData.descr} onChange={handleInputChange} /></td>
                                                             <td> <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleInputChange} /></td>
@@ -88,6 +105,7 @@ const Services = () => {
                                                         </tr>
                                                     )
                                                 }
+
                                                 return <tr>
                                                     <td>{value.title}</td>
                                                     <td>{value.descr}</td>
@@ -97,15 +115,14 @@ const Services = () => {
                                                     <td>{value.skills}</td>
                                                     <td>{value.experience}</td>
                                                     <td>{value.image}</td>
-                                                    <td><button className="btn btn-dark" onClick={() => handleEdit(value.id, value)}>Edit</button></td>
-                                                    <td><Link to="#" className="btn btn-dark">Delete</Link></td>
+                                                    <td><button className="btn btn-dark" onClick={() => handleEdit(value.id, value)}>Edit</button></td>                               
+                                                    <td> <button className="btn btn-dark" onClick={() => handleDelete(value.id)}>Delete</button></td>
                                                 </tr>
-                                            }
-                                            )
+                                            })
                                         }
                                     </tbody>
 
-                                </React.Fragment>
+                              
                             </tbody>
                         </table>
 
