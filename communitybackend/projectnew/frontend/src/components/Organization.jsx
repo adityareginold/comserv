@@ -37,6 +37,7 @@ const Organization = () => {
         if (data[0]) {
             const coords = fromLonLat([parseFloat(data[0].lon), parseFloat(data[0].lat)]);
             setCurrentLocation(coords);
+            setLocationData({ ...locationData, name: data[0].display_name });
         }
     };
 
@@ -45,6 +46,7 @@ const Organization = () => {
             navigator.geolocation.getCurrentPosition((position) => {
                 const coords = fromLonLat([position.coords.longitude, position.coords.latitude]);
                 setCurrentLocation(coords);
+               
             });
         } else {
             if (!map) {
@@ -85,8 +87,17 @@ const Organization = () => {
                     const lon = lonLat[0];
                     const lat = lonLat[1];
 
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lon=${lon}&lat=${lat}`);
+                    const data = await response.json();
+
+                    setLocationData({
+                        ...locationData,
+                        name :data.display_name,
+                        point: `POINT ( ${lon.toFixed(2)} ${lat.toFixed(2)} )`
+                    })
                     // Set the locationName state to a string that contains the latitude and longitude
-                    setLocationName(`Latitude: ${lat.toFixed(2)}, Longitude: ${lon.toFixed(2)}`);
+                    setLocationName(data.display_name);
+                    setLocationName({...locationData ,point : ` POINT ( ${lon.toFixed(2)} ${lat.toFixed(2)} )`});
                 });
                 setMap(initialMap);
                 setVectorSource(initialVectorSource);
@@ -187,8 +198,11 @@ const Organization = () => {
                         "skills": "",
                         "experience": "",
                     });
+                    const image_text_id = response.data.id;
+                    const locationDataWithImageId = {...locationData, image_text_id};
+                    
 
-                    axios.post(`${API}/locations/`, locationData, {
+                    axios.post(`${API}/locations/`, locationDataWithImageId, {
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': csrfToken // Include CSRF token in the headers
@@ -225,27 +239,22 @@ const Organization = () => {
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Title</label>
                                 <input type="text" className="form-control" name='title' value={input.title} onChange={inputHandler} />
-
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="floatingDescription">Description</label>
                                 <textarea className="form-control" id="floatingDescription" placeholder="Enter Description" name='descr' value={input.descr} onChange={inputHandler}></textarea>
-
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Objectives</label>
                                 <input type="text" className="form-control" name='objectives' value={input.objectives} onChange={inputHandler} />
-
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Tasks</label>
                                 <input type="text" className="form-control" name='tasks' value={input.tasks} onChange={inputHandler} />
-
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Skills required</label>
                                 <input type="text" className="form-control" name='skills' value={input.skills} onChange={inputHandler} />
-
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Experience</label>
@@ -261,7 +270,7 @@ const Organization = () => {
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Point</label>
-                                <input type="text" className="form-control" name='point' value={locationData.point} onChange={e => setLocationData({...locationData, point: e.target.value})} />
+                                <input type="text" className="form-control" name='point' value={locationData.point} onChange={e => setLocationData({...locationData, point: e.target.value})} readOnly/>
                             </div> 
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
@@ -274,7 +283,6 @@ const Organization = () => {
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6"><button className="btn btn-dark" onClick={readvalues}>submit</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

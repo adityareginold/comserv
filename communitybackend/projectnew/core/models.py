@@ -49,10 +49,9 @@ class Participation(models.Model):
         return f'Registration for {self.user.username} on {self.image_text.title}'
     
     
-class Location(models.Model):
+class Location(models.Model): 
     name = models.CharField(max_length=200)
     point = models.PointField() 
     image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
-
     def __str__(self):
         return self.name

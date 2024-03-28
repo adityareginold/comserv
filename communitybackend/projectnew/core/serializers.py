@@ -28,11 +28,19 @@ class ImageSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user"):
             return ImageText.objects.create(user=request.user, **validated_data)
         raise serializers.ValidationError("User must be authenticated to create an ImageText object.")
+
+
     
 
 class LocationSerializer(GeoFeatureModelSerializer):
-    image_text_id = serializers.PrimaryKeyRelatedField(source='image_text', queryset=ImageText.objects.all())
+    image_text_id = serializers.PrimaryKeyRelatedField(queryset=ImageText.objects.all())
+
     class Meta:
         model = Location
         geo_field = 'point'
         fields = ('id', 'name', 'point', 'image_text_id')
+
+    def create(self, validated_data):
+        image_text = validated_data.pop('image_text_id')
+        location = Location.objects.create(image_text=image_text, **validated_data)
+        return location

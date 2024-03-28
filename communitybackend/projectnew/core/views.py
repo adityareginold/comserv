@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer
@@ -25,15 +25,17 @@ def createlocation(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
+        print(request.data)
         serializer = LocationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     else:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+    
 
 # Get the CSRF token
 def csrf_token(request):
@@ -46,21 +48,6 @@ def front (request):
     context = { }
     return render(request, 'index.html', context)
 
-#registerdirecttodb
-# @api_view(['GET','POST'])
-# def task(request):
-#     if request.method == 'GET':
-#         task = Task.objects.all()
-#         serializer = TaskSerializer(task, many = True)
-#         return Response(serializer.data)
-
-
-#     elif request.method == 'POST':
-#         serializer = TaskSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Get the username of the currently authenticated user
 @login_required
