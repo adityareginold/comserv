@@ -35,7 +35,7 @@ const NavBar = () => {
                                     <Link class="nav-link active" aria-current="page" to="/register">Sign Up</Link>
                                 </li>
                                 {/* <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/getmap">View map testing</Link>
+                                    <Link class="nav-link active" aria-current="page" to="/map">View map testing</Link>
                                 </li> */}
                                 {/* <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/viewprofile">viewprofile</Link>

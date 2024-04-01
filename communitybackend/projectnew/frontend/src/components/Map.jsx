@@ -142,93 +142,67 @@ import Overlay from 'ol/Overlay';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import {API} from './config'
+import { useParams } from 'react-router-dom';
 
 
 const Map = () => {
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [popupContent, setPopupContent] = useState('');
-  const [locationName, setLocationName] = useState('');
   const [map, setMap] = useState(null);
   const [vectorSource, setVectorSource] = useState(null);
-
-  const searchLocation = async () => {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${locationName}`);
-    const data = await response.json();
-    if (data[0]) {
-      const coords = fromLonLat([parseFloat(data[0].lon), parseFloat(data[0].lat)]);
-      setCurrentLocation(coords);
-    }
-  };
+  const { coordinates } = useParams();
 
   useEffect(() => {
-    if (!currentLocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const coords = fromLonLat([position.coords.longitude, position.coords.latitude]);
-        setCurrentLocation(coords);
+     console.log("Coordinates from URL:", coordinates);
+    if (coordinates) {
+      const [lat, lon] = coordinates.split(',');
+      setCurrentLocation(fromLonLat([parseFloat(lon), parseFloat(lat)]));
+    }
+  }, [coordinates]);
+
+  useEffect(() => {
+    if (currentLocation && !map) {
+      const initialVectorSource = new VectorSource();
+      const vectorLayer = new VectorLayer({
+        source: initialVectorSource,
       });
-    } else {
-      if (!map) {
-        const initialVectorSource = new VectorSource();
-        const vectorLayer = new VectorLayer({
-          source: initialVectorSource,
-        });
 
-        const initialMap = new MapX({
-          target: mapRef.current,
-          layers: [
-            new TileLayer({
-              source: new OSM(),
-            }),
-            vectorLayer,
-          ],
-          view: new View({
-            center: currentLocation,
-            zoom: 18,
+      const initialMap = new MapX({
+        target: mapRef.current,
+        layers: [
+          new TileLayer({
+            source: new OSM(),
           }),
-        });
-        //for showing the location
-        // initialMap.on('click', async function (event) {
-        //   const clickedCoords = event.coordinate;
-        //   setCurrentLocation(clickedCoords);
-        //   // Reverse geocoding
-        //   const lonLat = toLonLat(clickedCoords);
-        //   const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lon=${lonLat[0]}&lat=${lonLat[1]}`);
-        //   const data = await response.json();
-        //   setLocationName(data.display_name);
-        // });
-        initialMap.on('click', async function (event) {
-          const clickedCoords = event.coordinate;
-          setCurrentLocation(clickedCoords);
+          vectorLayer,
+        ],
+        view: new View({
+          center: currentLocation,
+          zoom: 18,
+        }),
+      });
 
-          // Convert the coordinates to latitude and longitude
-          const lonLat = toLonLat(clickedCoords);
-          const lon = lonLat[0];
-          const lat = lonLat[1];
+      setMap(initialMap);
+      setVectorSource(initialVectorSource);
+    }
+  }, [currentLocation, map]);
 
-          // Set the locationName state to a string that contains the latitude and longitude
-          setLocationName(`Latitude: ${lat.toFixed(2)}, Longitude: ${lon.toFixed(2)}`);
-        });
-        setMap(initialMap);
-        setVectorSource(initialVectorSource);
-      } else {
-        map.getView().setCenter(currentLocation);
-        vectorSource.clear();
+  useEffect(() => {
+    if (map && vectorSource) {
+      vectorSource.clear();
 
-        const marker = new Feature({
-          geometry: new Point(currentLocation),
-        });
+      const marker = new Feature({
+        geometry: new Point(currentLocation),
+      });
 
-        marker.setStyle(
-          new Style({
-            image: new Icon({
-              src: 'https://openlayers.org/en/latest/examples/data/icon.png', // replace with your marker image
-            }),
-          })
-        );
+      marker.setStyle(
+        new Style({
+          image: new Icon({
+            src: 'https://openlayers.org/en/latest/examples/data/icon.png', // replace with your marker image
+          }),
+        })
+      );
 
-        vectorSource.addFeature(marker);
-      }
+      vectorSource.addFeature(marker);
     }
   }, [currentLocation, map, vectorSource]);
 
@@ -236,23 +210,13 @@ const Map = () => {
     <div className="container">
       <div className="row g-3">
         <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-          <div className="row g-3">
-            <div className="col col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-              <input type="text" className="form-control" value={locationName} onChange={e => setLocationName(e.target.value)} placeholder="Enter location name" />
-            </div>
-            <div className="col col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
-              <button className="btn btn-dark" onClick={searchLocation}> <FontAwesomeIcon icon={faSearch} /></button>
-            </div>
-            <div style={{ height: '600px', width: '700px' }}>
-              <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
-              <div id="popup">{popupContent}</div>
-            </div>
+          <div style={{ height: '600px', width: '700px' }}>
+            <div id="map" ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
           </div>
         </div>
       </div>
     </div>
   );
-
 };
 
 export default Map;

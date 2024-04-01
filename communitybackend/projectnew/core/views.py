@@ -6,7 +6,7 @@ from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProf
 from .models import ImageText, Task, UserProfile,Location
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
-from django.http import JsonResponse
+from django.http import JsonResponse,Http404
 from django.contrib.auth import authenticate, login ,logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
@@ -18,11 +18,15 @@ from django.contrib.auth import get_user_model
 
 
 @api_view(['GET', 'POST'])
-def createlocation(request):
+def createlocation(request, image_text=None):
     if request.method == 'GET':
-        locations = Location.objects.all()
+        if image_text is not None:  # If image_id is provided
+            locations = Location.objects.filter(image_text=image_text)  # Filter locations by image_text_id
+        else:
+            locations = Location.objects.all()  # If image_id is not provided, return all locations
         serializer = LocationSerializer(locations, many=True)
         return Response(serializer.data)
+
 
     elif request.method == 'POST':
         print(request.data)

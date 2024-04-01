@@ -30,8 +30,6 @@ class ImageSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError("User must be authenticated to create an ImageText object.")
 
 
-    
-
 class LocationSerializer(GeoFeatureModelSerializer):
     image_text_id = serializers.PrimaryKeyRelatedField(queryset=ImageText.objects.all())
 

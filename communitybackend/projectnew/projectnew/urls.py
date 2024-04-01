@@ -42,6 +42,7 @@ urlpatterns = [
     path('updateuser/', update_user, name='update_user'),
     path('imagetext/<int:id>/', ImageTextDetailView.as_view(), name='imagetext_detail'),
     path('locations/', createlocation, name='createlocation'),
+    path('locations/<int:image_text>/', createlocation, name='createlocationbyimageid'),
     path('view_services/',view_services, name= 'view_services'),
     path('update_services/<int:pk>/',update_services, name= 'update_services'),
     path('delete_service/<int:pk>/',delete_service, name= 'delete_service')

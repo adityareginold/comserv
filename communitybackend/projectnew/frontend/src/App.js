@@ -21,7 +21,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Homepage />} />
+          <Route path='/' element={<Homepage/>} />
           <Route path='/register' element={<RegistrationForm />} />
           <Route path='/login' element={<Login />} />
           <Route path='/db' element={<Dashboard />} />
@@ -33,10 +33,12 @@ function App() {
               <Map />
             </LoadScript>
           }/> */}
-            <Route path='/org' element={<Organization />} />
-            <Route path='/getmap' element={<Map />} />
-            <Route path='/viewservices' element={<Services/>}/>
+          <Route path='/getmap' element={<Map />} />
+          <Route path='/org' element={<Organization />} />
+          <Route path='/map/:coordinates' element={<Map />} />
          
+          <Route path='/viewservices' element={<Services />} />
+
         </Routes>
       </BrowserRouter>
     </div>
