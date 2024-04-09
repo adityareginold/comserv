@@ -1,9 +1,9 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404,render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer
-from .models import ImageText, Task, UserProfile,Location
+from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer,ParticipationSerializer,SearchSerializer
+from .models import ImageText, Task, UserProfile,Location,Participation
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.http import JsonResponse,Http404
@@ -14,7 +14,48 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import logging
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
+
+
+@api_view(['GET'])
+def search(request):
+    serializer = SearchSerializer(data=request.query_params)
+    if serializer.is_valid():
+        keyword = serializer.validated_data['keyword']
+        results = ImageText.objects.filter(
+            Q(objectives__icontains=keyword) |
+            Q(experience__icontains=keyword) |
+            Q(skills__icontains=keyword) |
+            Q(tasks__icontains=keyword)
+        )
+        print(results)
+        results_serializer = ImageSerializer(results, many=True)
+        return Response(results_serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def participation(request):
+    user = request.user
+    if 'imageTextId' not in request.data:
+        return Response({"error": "imageTextId is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    image_text_id = request.data['imageTextId']
+
+    try:
+        if Participation.objects.filter(user=user, image_text=image_text_id).exists():
+            return Response({"message": "User is already registered for this activity"}, status=status.HTTP_400_BAD_REQUEST)
+        image_text = ImageText.objects.get(id=image_text_id)
+    except ImageText.DoesNotExist:
+        return Response({"error": "ImageText does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = ParticipationSerializer(data={'user': user.id, 'image_text': image_text_id})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
@@ -108,6 +149,7 @@ class ImageTextCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 #login using username and password
 # class LoginView(APIView):
@@ -273,7 +315,6 @@ def update_services(request, pk):
         logger.error(e)
         return JsonResponse({'error': str(e)}, status=500)
     
-
 
 
 # Get the details of the currently authenticated user

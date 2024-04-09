@@ -48,17 +48,20 @@ const Services = () => {
             });
     }
     const handleDelete = (id) => {
-        axios.delete(`${API}/delete_service/${id}/`)
-            .then(response => {
-                console.log('Response data:', response.data);
-                
-                // Filter out the deleted item
-                const updatedData = data.filter(item => item.id !== id);
-                setData(updatedData);
-            })
-            .catch(error => {
-                console.error('Error deleting data: ', error);
-            });
+        const confirmDelete = window.confirm("Are you sure you want to delete this service?");
+        if (confirmDelete) {
+            axios.delete(`${API}/delete_service/${id}/`)
+                .then(response => {
+                    console.log('Response data:', response.data);
+                    
+                    // Filter out the deleted item
+                    const updatedData = data.filter(item => item.id !== id);
+                    setData(updatedData);
+                })
+                .catch(error => {
+                    console.error('Error deleting data: ', error);
+                });
+        }
     }
 
     useEffect(() => {

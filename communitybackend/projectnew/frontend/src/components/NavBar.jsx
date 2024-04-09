@@ -1,10 +1,26 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import { API } from './config';
+import axios from 'axios'
 
-const NavBar = () => {
+
+const NavBar = ({searchKeyword, setSearchKeyword, handleSearch}) => {
+    // const [searchKeyword, setSearchKeyword] = useState('');
+
+    // const handleSearch = async (event) => {
+    //     event.preventDefault();
+    //     try {
+    //         const response = await axios.get(`${API}/search/?keyword=${searchKeyword}`);
+    //         console.log(response.data); 
+    //         // Handle the search results
+    //     } catch (error) {
+    //         console.error('Failed to search:', error);
+    //     }
+    // };
+
     return (
         <div>
-
             <nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
                 <div class="container-fluid">
                     <Link class="navbar-brand" href="#">Community Service </Link>
@@ -16,10 +32,10 @@ const NavBar = () => {
                             <li class="nav-item">
                                 <Link class="nav-link active" aria-current="page" to="/">Home</Link>
                             </li>
-                            
                         </ul>
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                        <form class="d-flex" role="search" onSubmit={handleSearch}>
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={searchKeyword}
+                                onChange={e => setSearchKeyword(e.target.value)} />
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                         <div>
@@ -40,13 +56,9 @@ const NavBar = () => {
                                 {/* <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/viewprofile">viewprofile</Link>
                                 </li> */}
-                               
 
                             </ul>
-
                         </div>
-
-
                     </div>
                 </div>
             </nav>

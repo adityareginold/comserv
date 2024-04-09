@@ -45,6 +45,7 @@ class ImageText(models.Model):
 class Participation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
+    
     def __str__(self):
         return f'Registration for {self.user.username} on {self.image_text.title}'
     

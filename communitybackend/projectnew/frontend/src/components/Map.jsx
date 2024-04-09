@@ -145,12 +145,12 @@ import {API} from './config'
 import { useParams } from 'react-router-dom';
 
 
-const Map = () => {
+const Map = ({coordinates}) => {
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [map, setMap] = useState(null);
   const [vectorSource, setVectorSource] = useState(null);
-  const { coordinates } = useParams();
+  // const { coordinates } = useParams();
 
   useEffect(() => {
      console.log("Coordinates from URL:", coordinates);

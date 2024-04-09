@@ -21,6 +21,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from core.views import *
 # from django.views.generic import TemplateView
 
 
@@ -45,7 +46,9 @@ urlpatterns = [
     path('locations/<int:image_text>/', createlocation, name='createlocationbyimageid'),
     path('view_services/',view_services, name= 'view_services'),
     path('update_services/<int:pk>/',update_services, name= 'update_services'),
-    path('delete_service/<int:pk>/',delete_service, name= 'delete_service')
+    path('delete_service/<int:pk>/',delete_service, name= 'delete_service'),
+    path('participation/',participation,name='participation'),
+    path('search/', search, name='search'),
     
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ImageText, Task, UserProfile,User,Location
+from .models import ImageText, Task, UserProfile,User,Location,Participation
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -42,3 +42,14 @@ class LocationSerializer(GeoFeatureModelSerializer):
         image_text = validated_data.pop('image_text_id')
         location = Location.objects.create(image_text=image_text, **validated_data)
         return location
+
+class ParticipationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participation
+        fields = '__all__'
+        # fields = ('id','user_id','image_text_id','first_name','last_name','email','phone','address','skill','interest','title','descr')
+
+        # serializers.py
+
+class SearchSerializer(serializers.Serializer):
+    keyword = serializers.CharField(max_length=100)

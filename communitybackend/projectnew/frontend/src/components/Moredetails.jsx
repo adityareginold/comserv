@@ -3,14 +3,27 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 import { API } from './config'
+import Modal from 'react-modal';
+import Map from './Map'
 
 
-const Moredetails = () => {
+
+
+const Moredetails = ({ id }) => {
     const [data, setData] = useState(null);
     const [locationData, setLocationData] = useState(null);
-    const { id } = useParams(); // Get the ID from the URL
-    const {lat ,lng } = useParams();
+    // const { id } = useParams();
 
+    const { lat, lng } = useParams();
+    const [participationStatus, setParticipationStatus] = useState(false);
+    const [registrationError, setRegistrationError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+    const [selectedMapId, setSelectedMapId] = useState(null);
+    const handleMapClick = (id) => {
+        setSelectedMapId(id);
+        setIsMapModalOpen(true);
+    };
 
 
     useEffect(() => {
@@ -35,11 +48,31 @@ const Moredetails = () => {
 
         fetchCardDetails();
     }, [id]);
+    // Function to get the current user data
+    const handleParticipation = async () => {
+        try {
+
+
+            await axios.post(`${API}/participation/`, { imageTextId: id });
+            // If participation is successful, update participation status
+            setParticipationStatus(true);
+        } catch (error) {
+            if (error.response && error.response.status === 400 && error.response.data.message) {
+                // If the user is already registered, set registration error message
+                setRegistrationError(error.response.data.message);
+                alert(error.response.data.message);
+            } else {
+                console.error('Failed to participate:', error);
+            }
+        }
+    };
+
+
 
     // Render card details
     return (
         <div>
-            <NavBar />
+
             {data ? (
 
                 <div className="container">
@@ -67,24 +100,41 @@ const Moredetails = () => {
                                         <td>Contact No:</td>
                                         <td>{data.contact}</td>
                                     </tr>
+
                                     {locationData && locationData.features && locationData.features.length > 0 && (
                                         <>
                                             <tr>
                                                 <td>Location:</td>
-                                                <td><Link to={`/map/${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`}>
-                                               <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span> 
-                                                </Link></td>
-                                                
+                                                {/* <td><button onClick={() => handleMapClick(locationData.features[0].id)}>Open Map</button></td> */}
+                                                {/* <td><Link to={`/map/${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`}>
+                                                    <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span>
+                                                </Link></td> */}
+                                                <td>
+                                                  
+                                                        <Link
+                                                            to={`/map/${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`}
+                                                            onClick={(event) => {
+                                                                event.preventDefault();
+                                                                handleMapClick(locationData.features[0].id);
+                                                            }}
+                                                        >
+                                                            <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span>
+                                                        </Link>
+                                                    
+                                                </td>
+
                                             </tr>
-                                            {/* <tr>
-                                                <td>Location:</td>
-                                                <td>{locationData.features[0].properties.name}</td></tr> */}
-
                                         </>
-
                                     )}
+                                    <tr>
+                                        <td>Participate:</td>
+                                        <td>  <button className="btn btn-dark" onClick={handleParticipation} disabled={participationStatus}>
+                                            {participationStatus ? 'Registered' : 'Participate'}
+                                        </button></td>
+                                    </tr>
                                 </tbody>
                             </table>
+
 
                         </div>
                     </div>
@@ -92,6 +142,13 @@ const Moredetails = () => {
             ) : (
                 <p>Loading...</p>
             )}
+
+{isMapModalOpen && (
+    <Modal isOpen={isMapModalOpen} onRequestClose={() => setIsMapModalOpen(false)}>
+        <Map coordinates={`${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`} />
+        <button onClick={() => setIsMapModalOpen(false)}>Close</button>
+    </Modal>
+)}
         </div >
     );
 };

@@ -9,12 +9,14 @@ import Editprofile from './components/Editprofile';
 import Moredetails from './components/Moredetails';
 import Map from './components/Map';
 import Services from './components/Services';
+import Modal from 'react-modal';
+// rest of your code
 
 // import { LoadScript } from '@react-google-maps/api';
 
 
 
-
+Modal.setAppElement('#root');
 
 function App() {
   return (
@@ -38,6 +40,7 @@ function App() {
           <Route path='/map/:coordinates' element={<Map />} />
          
           <Route path='/viewservices' element={<Services />} />
+       
 
         </Routes>
       </BrowserRouter>
