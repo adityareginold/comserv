@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageText
-        fields = ('id', 'user_id', 'image', 'title', 'descr', 'objectives', 'tasks', 'skills', 'experience', 'contact')
+        fields = ('id', 'user_id', 'image', 'title', 'descr', 'objectives', 'tasks', 'skills', 'experience', 'contact','date','enddate')
 
     def create(self, validated_data):
         request = self.context.get("request")

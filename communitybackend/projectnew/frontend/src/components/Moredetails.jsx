@@ -13,7 +13,6 @@ const Moredetails = ({ id }) => {
     const [data, setData] = useState(null);
     const [locationData, setLocationData] = useState(null);
     // const { id } = useParams();
-
     const { lat, lng } = useParams();
     const [participationStatus, setParticipationStatus] = useState(false);
     const [registrationError, setRegistrationError] = useState(null);
@@ -89,6 +88,14 @@ const Moredetails = ({ id }) => {
                                         <td>{data.experience}</td>
                                     </tr>
                                     <tr>
+                                        <td>Start Date:</td>
+                                        <td>{data.date}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>End Date:</td>
+                                        <td>{data.enddate}</td>
+                                    </tr>
+                                    <tr>
                                         <td>Skills required:</td>
                                         <td>{data.skills}</td>
                                     </tr>
@@ -110,17 +117,17 @@ const Moredetails = ({ id }) => {
                                                     <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span>
                                                 </Link></td> */}
                                                 <td>
-                                                  
-                                                        <Link
-                                                            to={`/map/${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`}
-                                                            onClick={(event) => {
-                                                                event.preventDefault();
-                                                                handleMapClick(locationData.features[0].id);
-                                                            }}
-                                                        >
-                                                            <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span>
-                                                        </Link>
-                                                    
+
+                                                    <Link
+                                                        to={`/map/${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`}
+                                                        onClick={(event) => {
+                                                            event.preventDefault();
+                                                            handleMapClick(locationData.features[0].id);
+                                                        }}
+                                                    >
+                                                        <span>{locationData.features[0].properties.name}, {locationData.features[0].geometry.coordinates[1]}, {locationData.features[0].geometry.coordinates[0]}</span>
+                                                    </Link>
+
                                                 </td>
 
                                             </tr>
@@ -143,12 +150,12 @@ const Moredetails = ({ id }) => {
                 <p>Loading...</p>
             )}
 
-{isMapModalOpen && (
-    <Modal isOpen={isMapModalOpen} onRequestClose={() => setIsMapModalOpen(false)}>
-        <Map coordinates={`${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`} />
-        <button onClick={() => setIsMapModalOpen(false)}>Close</button>
-    </Modal>
-)}
+            {isMapModalOpen && (
+                <Modal isOpen={isMapModalOpen} onRequestClose={() => setIsMapModalOpen(false)}>
+                    <Map coordinates={`${locationData.features[0].geometry.coordinates[1]},${locationData.features[0].geometry.coordinates[0]}`} />
+                    <button onClick={() => setIsMapModalOpen(false)}>Close</button>
+                </Modal>
+            )}
         </div >
     );
 };

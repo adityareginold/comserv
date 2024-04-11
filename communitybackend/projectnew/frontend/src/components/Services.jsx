@@ -80,6 +80,8 @@ const Services = () => {
                                         <tr>
                                             <th scope="col">Title</th>
                                             <th scope="col">Description</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">End Date</th>
                                             <th scope="col">Contact</th>
                                             <th scope="col">Tasks</th>
                                             <th scope="col">Objectives</th>
@@ -98,6 +100,8 @@ const Services = () => {
 
                                                             <td><input type="text" className="form-control" name="title" value={formData.title} onChange={handleInputChange} /></td>
                                                             <td><input type="text" className="form-control" name="descr" value={formData.descr} onChange={handleInputChange} /></td>
+                                                            <td> <input type="date" className="form-control" name="date" value={formData.date} onChange={handleInputChange} /></td>
+                                                            <td> <input type="date" className="form-control" name="enddate" value={formData.enddate} onChange={handleInputChange} /></td>
                                                             <td> <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleInputChange} /></td>
                                                             <td> <input type="text" className="form-control" name="tasks" value={formData.tasks} onChange={handleInputChange} /></td>
                                                             <td> <input type="text" className="form-control" name="objectives" value={formData.objectives} onChange={handleInputChange} /></td>
@@ -112,6 +116,8 @@ const Services = () => {
                                                 return <tr>
                                                     <td>{value.title}</td>
                                                     <td>{value.descr}</td>
+                                                    <td>{value.date}</td>
+                                                    <td>{value.enddate}</td>
                                                     <td>{value.contact}</td>
                                                     <td>{value.tasks}</td>
                                                     <td>{value.objectives}</td>

@@ -15,7 +15,69 @@ from django.core.exceptions import ObjectDoesNotExist
 import logging
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.utils import timezone
 
+
+
+@api_view(['GET'])
+def filter_view(request):
+    start_date = request.GET.get('startDate')
+    end_date = request.GET.get('endDate')
+    skills = request.GET.getlist('skills')
+    location = request.GET.get('location')  
+    title = request.GET.get('title')  
+
+    queryset = ImageText.objects.all()
+
+    if start_date and end_date:
+        queryset = queryset.filter(date__range=[start_date, end_date])
+
+    if location:
+        queryset = queryset.filter(location__icontains=location)
+
+    if skills:
+        q_objects = Q()
+        for skill in skills:
+            q_objects |= Q(skills__icontains=skill)
+        queryset = queryset.filter(q_objects)
+
+    if title:
+        q_objects = Q()
+        for t in title:  # Change this line
+            q_objects |= Q(title__icontains=t)  # And this line
+        queryset = queryset.filter(q_objects)
+        print(queryset)
+
+    results_serializer = ImageSerializer(queryset, many=True)
+    return Response(results_serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def sort_images(request):
+    sort_order = request.query_params.get('order', 'asc')
+    sort_field = request.query_params.get('sort', 'title')
+    start_date = request.query_params.get('startDate', None)
+    end_date = request.query_params.get('endDate', None)
+
+    if sort_order.lower() == 'asc':
+        sort_field = sort_field
+    elif sort_order.lower() == 'desc':
+        sort_field = '-' + sort_field
+    else:
+        return Response({"error": "Invalid sort order"}, status=status.HTTP_400_BAD_REQUEST)
+
+    queryset = ImageText.objects.all()
+
+    if start_date and end_date:
+        try:
+            start_date = timezone.datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
+            queryset = queryset.filter(date__range=[start_date, end_date])
+        except ValueError:
+            return Response({"error": "Invalid date format. Expected YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+    queryset = queryset.order_by(sort_field)
+    serializer = ImageSerializer(queryset, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -24,6 +86,7 @@ def search(request):
     if serializer.is_valid():
         keyword = serializer.validated_data['keyword']
         results = ImageText.objects.filter(
+            Q(title__icontains=keyword)|
             Q(objectives__icontains=keyword) |
             Q(experience__icontains=keyword) |
             Q(skills__icontains=keyword) |
@@ -269,53 +332,6 @@ def update_user(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-# Update the services
-@login_required
-@api_view(['PUT'])
-def update_services(request, pk):
-    try:
-        if request.method == 'PUT':
-            logger.info('Updating ImageText with id %s', pk)
-            logger.info('Request data: %s', request.data)
-
-            # Get the fields from the request
-            title = request.data.get('title')
-            descr = request.data.get('descr')
-            contact = request.data.get('contact')
-            tasks = request.data.get('tasks')
-            objectives = request.data.get('objectives')
-            skills = request.data.get('skills')
-            experience = request.data.get('experience')
-            image = request.data.get('image')
-
-            # Get the ImageText instance and update its fields
-            image_text = ImageText.objects.get(pk=pk)
-            image_text.title = title
-            image_text.descr = descr
-            image_text.contact = contact
-            image_text.tasks = tasks
-            image_text.objectives = objectives
-            image_text.skills = skills
-            image_text.experience = experience
-            image_text.image = image
-            image_text.save()
-
-            # Serialize the updated ImageText instance
-            serializer = ImageSerializer(image_text)
-
-            return JsonResponse({
-                'success': 'ImageText updated successfully',
-                'image_text': serializer.data
-            })
-        else:
-            return JsonResponse({'error': 'Method not allowed'}, status=405)
-    except ObjectDoesNotExist as e:
-        return JsonResponse({'error': 'ImageText does not exist'}, status=404)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({'error': str(e)}, status=500)
-    
-
 
 # Get the details of the currently authenticated user
 @login_required
@@ -346,6 +362,58 @@ def view_services(request):
     serializer = ImageSerializer(image_texts, many=True)
     return Response(serializer.data)
 
+
+
+# Update the services
+@login_required
+@api_view(['PUT'])
+def update_services(request, pk):
+    try:
+        if request.method == 'PUT':
+            logger.info('Updating ImageText with id %s', pk)
+            logger.info('Request data: %s', request.data)
+
+            # Get the fields from the request
+            title = request.data.get('title')
+            descr = request.data.get('descr')
+            date = request.data.get('date')
+            enddate = request.data.get('enddate')
+            contact = request.data.get('contact')
+            tasks = request.data.get('tasks')
+            objectives = request.data.get('objectives')
+            skills = request.data.get('skills')
+            experience = request.data.get('experience')
+            image = request.data.get('image')
+
+            # Get the ImageText instance and update its fields
+            image_text = ImageText.objects.get(pk=pk)
+            image_text.title = title
+            image_text.descr = descr
+            image_text.date = date
+            image_text.enddate = enddate
+            image_text.contact = contact
+            image_text.tasks = tasks
+            image_text.objectives = objectives
+            image_text.skills = skills
+            image_text.experience = experience
+            image_text.image = image
+            image_text.save()
+
+            # Serialize the updated ImageText instance
+            serializer = ImageSerializer(image_text)
+
+            return JsonResponse({
+                'success': 'ImageText updated successfully',
+                'image_text': serializer.data
+            })
+        else:
+            return JsonResponse({'error': 'Method not allowed'}, status=405)
+    except ObjectDoesNotExist as e:
+        return JsonResponse({'error': 'ImageText does not exist'}, status=404)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({'error': str(e)}, status=500)
+    
 
 
 # Delete the services

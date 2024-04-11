@@ -30,18 +30,15 @@ function App() {
           <Route path='/viewuser' element={<ViewProfile />} />\
           <Route path='/editprofile' element={<Editprofile />} />
           <Route path='/moredetails/:id' element={<Moredetails />} />
-          {/* <Route path='/getmap' element={
+          <Route path='/getmap' element={<Map />} />
+          <Route path='/org' element={<Organization />} />
+          <Route path='/map/:coordinates' element={<Map />} />
+          <Route path='/viewservices' element={<Services />} />
+            {/* <Route path='/getmap' element={
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
               <Map />
             </LoadScript>
           }/> */}
-          <Route path='/getmap' element={<Map />} />
-          <Route path='/org' element={<Organization />} />
-          <Route path='/map/:coordinates' element={<Map />} />
-         
-          <Route path='/viewservices' element={<Services />} />
-       
-
         </Routes>
       </BrowserRouter>
     </div>

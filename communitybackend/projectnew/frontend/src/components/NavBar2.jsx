@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie';
 import Dropdown from 'react-bootstrap/Dropdown';
 import '../design/toggle.css';
-import {API} from './config';
+import { API } from './config';
 
 
 
@@ -26,11 +26,11 @@ const NavBar2 = () => {
             (response => setUsername(response.data.username));
     }, []);
 
-   
+
     useEffect(() => {
         axios.get(`${API}/profilepicture/`).then
-        (response =>   setProfilePicture(response.data.profilePicture));
-    }, []); 
+            (response => setProfilePicture(response.data.profilePicture));
+    }, []);
     const handleLogout = () => {
         const csrftoken = Cookies.get('csrftoken');
         axios.post(`${API}/accounts/logout/`, {}, {
@@ -48,8 +48,8 @@ const NavBar2 = () => {
                     }
                 });
     }
-   
-   
+
+
 
     return (
         <div>
@@ -86,21 +86,21 @@ const NavBar2 = () => {
                                 </li>
                             </ul>
                         </div> */}
-                        
-                    <Dropdown >
-                    <Dropdown.Toggle className='dropdown-toggle' id="dropdown-basic">
-                        <img src={profilePicture} style={{ borderRadius: '50%', height: '30px', width: '30px' ,border:'none'}} />
-                    </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                        <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
-                        <Link to="/viewuser" className="dropdown-item">Profile</Link>
-                        {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
-                        {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
-                        {option === 'Organization' && <Link to="/viewservices" className="dropdown-item">View Services</Link>}
+                        <Dropdown >
+                            <Dropdown.Toggle className='dropdown-toggle' id="dropdown-basic">
+                                <img src={profilePicture} style={{ borderRadius: '50%', height: '30px', width: '30px', border: 'none' }} />
+                            </Dropdown.Toggle>
 
-                    </Dropdown.Menu>
-                </Dropdown>
+                            <Dropdown.Menu>
+                                <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
+                                <Link to="/viewuser" className="dropdown-item">Profile</Link>
+                                {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
+                                {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
+                                {option === 'Organization' && <Link to="/viewservices" className="dropdown-item">View Services</Link>}
+
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </div>
                 </div>
             </nav>

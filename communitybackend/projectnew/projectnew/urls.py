@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.urls import path,include
 from core.views import  ImageTextDetailView, front,ImageTextListView,ImageTextCreateView,get_option,view_services,update_services,delete_service
-from core.views import get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user,createlocation
+from core.views import get_username,LoginView, LogoutView, register,csrf_token,get_user_profile,userdetails,update_user,createlocation, filter_view,sort_images
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -49,6 +49,9 @@ urlpatterns = [
     path('delete_service/<int:pk>/',delete_service, name= 'delete_service'),
     path('participation/',participation,name='participation'),
     path('search/', search, name='search'),
+    path('filter/', filter_view, name='filter_view'),
+    path('sort_images/', sort_images, name='sort_images'),
+    
     
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

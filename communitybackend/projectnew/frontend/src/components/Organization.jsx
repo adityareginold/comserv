@@ -125,6 +125,8 @@ const Organization = () => {
     const [input, setInput] = useState({
         "image": "",
         "title": "",
+        "date" : "",
+        "enddate": "",
         "descr": "",
         "contact": "",
         "objectives": "",
@@ -169,6 +171,8 @@ const Organization = () => {
         const formData = new FormData();
         formData.append('image', input.image);
         formData.append('title', input.title);
+        formData.append('date', input.date);
+        formData.append('enddate', input.enddate);
         formData.append('descr', input.descr);
         formData.append('objectives', input.objectives);
         formData.append('tasks', input.tasks);
@@ -191,6 +195,8 @@ const Organization = () => {
                     setInput({
                         "image": "",
                         "title": "",
+                        "date" : "",
+                        "enddate": "",
                         "descr": "",
                         "contact": "",
                         "objectives": "",
@@ -239,6 +245,14 @@ const Organization = () => {
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Title</label>
                                 <input type="text" className="form-control" name='title' value={input.title} onChange={inputHandler} />
+                            </div>
+                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                <label htmlFor="" className="form-label">Start Date</label>
+                                <input type="date" className="form-control" name='date' value={input.date} onChange={inputHandler} />
+                            </div>
+                            <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                                <label htmlFor="" className="form-label">End Date</label>
+                                <input type="date" className="form-control" name='enddate' value={input.enddate} onChange={inputHandler} />
                             </div>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="floatingDescription">Description</label>

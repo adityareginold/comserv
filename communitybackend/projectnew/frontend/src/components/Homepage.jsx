@@ -11,13 +11,58 @@ import '../design/ModalStyles.css'
 const Homepage = () => {
     const [data, setData] = new useState([])
     const [searchKeyword, setSearchKeyword] = useState('')
+    const [filterCriteria, setFilterCriteria] = useState({});
+    const [sortField, setSortField] = useState('title');
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [startDate, setStartDate] = useState(null); // New state variable
+    const [endDate, setEndDate] = useState(null); // Ne
 
     const getData = () => {
         axios.get(`${API}/imagesfrom/`).then(
             (response) => { setData(response.data) }
         )
     }
+    const handleSortChange = () => {
+        axios.get(`${API}/sort_images?sort=${sortField}&order=${sortOrder}`)
+            .then((response) => {
+                setData(response.data);
+            });
+    };
+    const handleDateSortChange = () => {
+        if (startDate && endDate) {
+            axios.get(`${API}/sort_images?startDate=${startDate}&endDate=${endDate}`)
+                .then((response) => {
+                    setData(response.data);
+                });
+        }
+    };
 
+    const handleFilterChange = (event) => {
+        const { name, checked, value } = event.target;
+        setFilterCriteria(prevCriteria => {
+            let newCriteria;
+            if (Array.isArray(prevCriteria[name])) {
+                if (checked) {
+                    // If the checkbox is checked, add the value to the array
+                    newCriteria = { ...prevCriteria, [name]: [...prevCriteria[name], value] };
+                } else {
+                    // If the checkbox is unchecked, remove the value from the array
+                    newCriteria = { ...prevCriteria, [name]: prevCriteria[name].filter(item => item !== value) };
+                }
+            } else {
+                // If the checkbox is not part of an array, just set the value
+                newCriteria = { ...prevCriteria, [name]: checked ? value : null };
+            }
+
+            // Call the API with the new filter criteria
+            axios.get(`${API}/filter/`, { params: newCriteria })
+                .then((response) => {
+                    setData(response.data);
+                });
+
+            return newCriteria;
+        });
+    };
 
     const handleSearch = async (event) => {
         event.preventDefault();
@@ -30,16 +75,18 @@ const Homepage = () => {
     };
 
 
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCardId, setSelectedCardId] = useState(null);
+
+
+
     useEffect(() => { getData() }, [])
 
 
     return (
         <div>
 
-            <NavBar searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} handleSearch={handleSearch} />                            
+            <NavBar searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} handleSearch={handleSearch} />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -72,6 +119,39 @@ const Homepage = () => {
                                     </button>
                                 </div>
 
+                            </div>
+                            <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                <p>filter</p>
+                                <p>Skills</p>
+                                <label>
+                                    <input type="checkbox" name="title" value="Childcare" onChange={handleFilterChange} />
+                                    Child Care
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="skills" value="Plant Trees" onChange={handleFilterChange} />
+                                    Plant Trees
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="skills" value="Food Donation" onChange={handleFilterChange} />
+                                    Food Donation
+                                </label>
+                            </div>
+
+
+                            <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                <p>Sort</p>
+                                <select name="sortField" value={sortField} onChange={(e) => { setSortField(e.target.value); handleSortChange(); }}>
+                                    <option value="title">Title</option>
+                                    {/* Add more options as needed */}
+                                </select>
+                                <select name="sortOrder" value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); handleSortChange(); }}>
+                                    <option value="desc">Ascending</option>
+                                    <option value="asc">Descending</option>
+                                </select>
+                                <p>Filter by Date Range</p>
+                                <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
+                                <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
+                                <button onClick={handleDateSortChange}>Apply</button>
                             </div>
 
                             <div className="row g-3" >

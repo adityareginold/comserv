@@ -5,7 +5,7 @@ import { API } from './config';
 import axios from 'axios'
 
 
-const NavBar = ({searchKeyword, setSearchKeyword, handleSearch}) => {
+const NavBar = ({ searchKeyword, setSearchKeyword, handleSearch }) => {
     // const [searchKeyword, setSearchKeyword] = useState('');
 
     // const handleSearch = async (event) => {
