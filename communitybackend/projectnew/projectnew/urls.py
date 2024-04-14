@@ -51,6 +51,9 @@ urlpatterns = [
     path('search/', search, name='search'),
     path('filter/', filter_view, name='filter_view'),
     path('sort_images/', sort_images, name='sort_images'),
+    path('getuserservices/', get_user_participations,name ='getuserservices'),
+    path('deleteuserservices/<int:id>/' ,delete_user_participation, name='deleteuserservices'),
+
     
     
    ]

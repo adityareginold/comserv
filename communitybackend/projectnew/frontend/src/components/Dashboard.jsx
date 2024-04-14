@@ -10,12 +10,41 @@ import '../design/ModalStyles.css'
 
 
 const Dashboard = () => {
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
     const [data, setData] = new useState([])
-    const getData = () => {
-        axios.get(`${API}/imagesfrom/`).then(
-            (response) => { setData(response.data) }
-        )
-    }
+    const [searchKeyword, setSearchKeyword] = useState('')
+
+
+      const getData = () => {
+        axios.get(`${API}/imagesfrom/?page=${currentPage}`)
+               .then((response) => {
+                console.log('API response:', response.data); // Log the API response
+                setData(response.data.results);
+                const itemsPerPage = response.data.results.length;
+                const totalItems = response.data.count;
+                setTotalPages(Math.ceil(totalItems / itemsPerPage));
+                console.log('Total pages:', totalPages); // Log the value of totalPages
+            })
+            .catch((error) => {
+                console.error(`Error fetching data: ${error}`);
+            });
+    };
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+    const handleSearch = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await axios.get(`${API}/search/?keyword=${searchKeyword}`);
+            setData(response.data); // Set the search results
+        } catch (error) {
+            console.error('Failed to search:', error);
+        }
+    };
     const updateLikes = id => {
         setData(prevData => {
             return prevData.map(item => {
@@ -30,10 +59,10 @@ const Dashboard = () => {
     const [selectedCardId, setSelectedCardId] = useState(null);
     
 
-    useEffect(() => { getData() }, [])
+    useEffect(() => { getData() }, [currentPage])
     return (
         <div>
-            <NavBar2 />
+            <NavBar2 searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} handleSearch={handleSearch} />
             <div className="container">
                 <div className="row g-3">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -66,6 +95,11 @@ const Dashboard = () => {
                             }
 
                         </div>
+                        <div className="pagination">
+                                <button class="btn btn-dark" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                                <span>Page {currentPage} of {totalPages}</span>
+                                <button class="btn btn-dark" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages}>Next</button>
+                            </div>
                     </div>
                 </div>
 

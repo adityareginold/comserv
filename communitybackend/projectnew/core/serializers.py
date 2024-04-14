@@ -49,7 +49,13 @@ class ParticipationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # fields = ('id','user_id','image_text_id','first_name','last_name','email','phone','address','skill','interest','title','descr')
 
-        # serializers.py
+
+class ParticipateSerializer(serializers.ModelSerializer):
+    image_text = ImageSerializer()  # Assuming you have an ImageTextSerializer
+
+    class Meta:
+        model = Participation
+        fields = ['id','image_text', 'user_id', 'image_text_id']  # Include other fields as needed
 
 class SearchSerializer(serializers.Serializer):
     keyword = serializers.CharField(max_length=100)

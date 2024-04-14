@@ -14,14 +14,32 @@ const Homepage = () => {
     const [filterCriteria, setFilterCriteria] = useState({});
     const [sortField, setSortField] = useState('title');
     const [sortOrder, setSortOrder] = useState('asc');
-    const [startDate, setStartDate] = useState(null); // New state variable
-    const [endDate, setEndDate] = useState(null); // Ne
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     const getData = () => {
-        axios.get(`${API}/imagesfrom/`).then(
-            (response) => { setData(response.data) }
-        )
-    }
+        axios.get(`${API}/imagesfrom/?page=${currentPage}`)
+               .then((response) => {
+                console.log('API response:', response.data); // Log the API response
+                setData(response.data.results);
+                const itemsPerPage = response.data.results.length;
+                const totalItems = response.data.count;
+                setTotalPages(Math.ceil(totalItems / itemsPerPage));
+                console.log('Total pages:', totalPages); // Log the value of totalPages
+            })
+            .catch((error) => {
+                console.error(`Error fetching data: ${error}`);
+            });
+    };
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+
     const handleSortChange = () => {
         axios.get(`${API}/sort_images?sort=${sortField}&order=${sortOrder}`)
             .then((response) => {
@@ -80,7 +98,7 @@ const Homepage = () => {
 
 
 
-    useEffect(() => { getData() }, [])
+    useEffect(() => { getData() }, [currentPage])
 
 
     return (
@@ -149,8 +167,8 @@ const Homepage = () => {
                                     <option value="asc">Descending</option>
                                 </select>
                                 <p>Filter by Date Range</p>
-                                <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
-                                <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
+                                <input type="date"  name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
+                                <input type="date"  name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
                                 <button onClick={handleDateSortChange}>Apply</button>
                             </div>
 
@@ -172,6 +190,11 @@ const Homepage = () => {
                                 }
 
 
+                            </div>
+                            <div className="pagination">
+                                <button class="btn btn-dark" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                                <span>Page {currentPage} of {totalPages}</span>
+                                <button class="btn btn-dark" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages}>Next</button>
                             </div>
                         </div>
                     </div>

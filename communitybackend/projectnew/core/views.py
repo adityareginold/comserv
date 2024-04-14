@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404,render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer,ParticipationSerializer,SearchSerializer
+from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer,ParticipationSerializer,SearchSerializer,ParticipateSerializer
 from .models import ImageText, Task, UserProfile,Location,Participation
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -16,8 +16,29 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils import timezone
+from rest_framework.pagination import PageNumberPagination
 
 
+@login_required
+@api_view(['GET'])
+def get_user_participations(request):
+    participations = Participation.objects.filter(user_id=request.user.id)
+    serializer = ParticipateSerializer(participations, many=True)
+    return Response(serializer.data)
+
+from rest_framework import status
+from rest_framework.response import Response
+
+@login_required
+@api_view(['DELETE'])
+def delete_user_participation(request, id):
+    try:
+        participation = Participation.objects.get(id=id, user_id=request.user.id)
+    except Participation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    participation.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def filter_view(request):
@@ -193,13 +214,25 @@ class ImageTextDetailView(APIView):
         Services = get_object_or_404(ImageText, id=id)
         serializer = ImageSerializer(Services)
         return Response(serializer.data)
-
-# View the services in cards
+    
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 class ImageTextListView(APIView):
     def get(self, request):
+        paginator = StandardResultsSetPagination()
         dashview = ImageText.objects.all()
-        serializer = ImageSerializer(dashview, many=True)
-        return Response(serializer.data) 
+        result_page = paginator.paginate_queryset(dashview, request)
+        serializer = ImageSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    
+# View the services in cards
+# class ImageTextListView(APIView):
+#     def get(self, request):
+#         dashview = ImageText.objects.all()
+#         serializer = ImageSerializer(dashview, many=True)
+#         return Response(serializer.data) 
 
 # Create new services
 class ImageTextCreateView(APIView):
@@ -361,6 +394,7 @@ def view_services(request):
     image_texts = ImageText.objects.filter(user_id=user_id)
     serializer = ImageSerializer(image_texts, many=True)
     return Response(serializer.data)
+
 
 
 

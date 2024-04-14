@@ -62,7 +62,7 @@ const RegistrationForm = () => {
         const data = new FormData();
         Object.keys(formData).forEach(key => data.append(key, formData[key]));
         try {
-            const response = await axios.post( `${API}/register/`, formData, {
+            const response = await axios.post(`${API}/register/`, formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                     'Content-Type': 'multipart/form-data',
@@ -94,7 +94,9 @@ const RegistrationForm = () => {
                         </div>
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="phone" className="form-label">Phone</label>
-                            <input type="text" className="form-control" name='phone' value={formData.phone} onChange={handleChange} required />
+                            <input type="text" className="form-control" name='phone' value={formData.phone} onChange={handleChange} pattern="\d{10}" onInput={(event) => {
+                                event.target.value = event.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                            }} required />
                         </div>
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="" className="form-label">Address:</label>
@@ -112,7 +114,7 @@ const RegistrationForm = () => {
                             <>
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Interest:</label>
-                                    <input type="text" className="form-control" name='interest' value={formData.interest} onChange={handleChange} />
+                                    <input type="text" className="form-control" name='interest' value={formData.interest} onChange={handleChange} required />
                                 </div>
                                 <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                     <label htmlFor="" className="form-label">Skills:</label>
@@ -130,7 +132,7 @@ const RegistrationForm = () => {
                         {formData.option !== 'Volunteer' && (<>
                             <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                                 <label htmlFor="" className="form-label">Organization Name:</label>
-                                <input type="text" className="form-control" name='organization_name' value={formData.organization_name} onChange={handleChange} />
+                                <input type="text" className="form-control" name='organization_name' value={formData.organization_name} onChange={handleChange} required />
                             </div>
                         </>)}
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
@@ -139,7 +141,8 @@ const RegistrationForm = () => {
                         </div>
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} required />
+                            <input type="email" className="form-control" id="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}+\.com$"
+                                title="Please include '.com' at the end of your email address" name="email" value={formData.email} onChange={handleChange} required />
                         </div>
                         <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                             <label htmlFor="username" className="form-label">Username</label>

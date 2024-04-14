@@ -8,7 +8,7 @@ import { API } from './config';
 
 
 
-const NavBar2 = () => {
+const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
 
     const [username, setUsername] = useState('')
     const [profilePicture, setProfilePicture] = useState('');
@@ -67,8 +67,9 @@ const NavBar2 = () => {
                                 <Link class="nav-link active" aria-current="page" to="/">Home</Link>
                             </li>
                         </ul>
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                        <form class="d-flex" role="search" onSubmit={handleSearch}>
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value={searchKeyword}
+                                onChange={e => setSearchKeyword(e.target.value)} />
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
                         {/* <div>
@@ -95,6 +96,8 @@ const NavBar2 = () => {
                             <Dropdown.Menu>
                                 <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
                                 <Link to="/viewuser" className="dropdown-item">Profile</Link>
+                             
+                                {option === 'Volunteer' && <Link to="/volunteerserv" className="dropdown-item">My Services</Link>}
                                 {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
                                 {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
                                 {option === 'Organization' && <Link to="/viewservices" className="dropdown-item">View Services</Link>}
