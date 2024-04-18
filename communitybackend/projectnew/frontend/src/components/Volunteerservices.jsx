@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API } from './config';
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+// axios.defaults.xsrfCookieName = 'csrftoken'
+// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 const Volunteerservices = () => {
     const [data, setData] = useState([]);

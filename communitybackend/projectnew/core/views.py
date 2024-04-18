@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404,render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TaskSerializer,ImageSerializer,UserSerializer, UserProfileSerializer,LocationSerializer,ParticipationSerializer,SearchSerializer,ParticipateSerializer
-from .models import ImageText, Task, UserProfile,Location,Participation
+from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer
+from .models import ImageText, Task, UserProfile,Location,Participation,CompletedParticipation,Feedback
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.http import JsonResponse,Http404
@@ -17,7 +17,61 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import CreateAPIView
 
+
+
+
+
+
+from django.http import Http404
+from rest_framework.exceptions import ValidationError
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+@api_view(['POST'])
+def store_feedback(request, id):
+    try:
+        feedback_data = request.data
+        feedback_data['user'] = request.user.id
+
+        # Get the CompletedParticipation with the given id
+        completed_participation = get_object_or_404(CompletedParticipation, id=id)
+        feedback_data['completed_participation'] = completed_participation.id
+
+        serializer = FeedbackSerializer(data=feedback_data, context={'request': request, 'id': id})
+        if serializer.is_valid(raise_exception=True):  # This will raise a ValidationError if the serializer is not valid
+            feedback = serializer.save()
+            return Response(FeedbackSerializer(feedback).data, status=status.HTTP_201_CREATED)
+    except Http404:
+        logger.exception("CompletedParticipation not found")
+        return Response({"error": "CompletedParticipation not found"}, status=status.HTTP_404_NOT_FOUND)
+    except ValidationError as e:
+        logger.exception("Validation error")
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.exception("An unexpected error occurred")
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ParticipateView(APIView):
+    def get(self, request, format=None):
+        participations = Participation.objects.all()
+
+        for participation in participations:
+            if participation.image_text.enddate < timezone.now().date():
+                CompletedParticipation.objects.create(
+                    image_text=participation.image_text,
+                    user=participation.user,
+                    # Set other fields as needed
+                )
+                participation.delete()
+              
+
+        completed_participations = CompletedParticipation.objects.all()
+        serializer = CompletedParticipationSerializer(completed_participations, many=True)
+        return Response(serializer.data)
 
 @login_required
 @api_view(['GET'])
@@ -216,7 +270,7 @@ class ImageTextDetailView(APIView):
         return Response(serializer.data)
     
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 12
+    page_size = 8
     page_size_query_param = 'page_size'
     max_page_size = 1000
 class ImageTextListView(APIView):

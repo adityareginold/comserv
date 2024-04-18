@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import ImageText, Task, UserProfile,User,Location,Participation
+from .models import ImageText, Task, UserProfile,User,Location,Participation,CompletedParticipation,Feedback
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from django.shortcuts import get_object_or_404
 
 class TaskSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -47,15 +48,39 @@ class ParticipationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participation
         fields = '__all__'
-        # fields = ('id','user_id','image_text_id','first_name','last_name','email','phone','address','skill','interest','title','descr')
-
-
-class ParticipateSerializer(serializers.ModelSerializer):
-    image_text = ImageSerializer()  # Assuming you have an ImageTextSerializer
+    
+class CompletedParticipationSerializer(serializers.ModelSerializer):
+    image_text = ImageSerializer()  
 
     class Meta:
+        model = CompletedParticipation
+        fields = ['id', 'image_text', 'user_id', 'image_text_id']  
+
+class ParticipateSerializer(serializers.ModelSerializer):
+    image_text = ImageSerializer()  
+    class Meta:
         model = Participation
-        fields = ['id','image_text', 'user_id', 'image_text_id']  # Include other fields as needed
+        fields = ['id','image_text', 'user_id', 'image_text_id']  
 
 class SearchSerializer(serializers.Serializer):
     keyword = serializers.CharField(max_length=100)
+
+
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ['id', 'user_id', 'rating', 'general_comments', 'organization_feedback', 'experience_feedback', 'suggestions']
+
+    def create(self, validated_data):
+        # Get the authenticated user
+        user = self.context['request'].user
+
+        # Get the CompletedParticipation instance
+        cp_id = self.context['id']
+        completed_participation = get_object_or_404(CompletedParticipation, id=cp_id)
+
+        # Create the Feedback instance
+        feedback = Feedback.objects.create(user=user, completed_participation=completed_participation, **validated_data)
+        return feedback

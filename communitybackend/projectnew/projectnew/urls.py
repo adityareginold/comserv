@@ -53,9 +53,8 @@ urlpatterns = [
     path('sort_images/', sort_images, name='sort_images'),
     path('getuserservices/', get_user_participations,name ='getuserservices'),
     path('deleteuserservices/<int:id>/' ,delete_user_participation, name='deleteuserservices'),
-
-    
-    
+    path('participated/', ParticipateView.as_view(), name='participate'),
+    path('feedback/<int:id>/', store_feedback, name='store_feedback'),
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

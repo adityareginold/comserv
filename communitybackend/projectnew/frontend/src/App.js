@@ -11,6 +11,8 @@ import Map from './components/Map';
 import Services from './components/Services';
 import Modal from 'react-modal';
 import Volunteerservices from './components/Volunteerservices';
+import CompletedEvents from './components/CompletedEvents';
+import FeedbackReview from './components/FeedbackReview';
 // rest of your code
 
 // import { LoadScript } from '@react-google-maps/api';
@@ -36,6 +38,8 @@ function App() {
           <Route path='/map/:coordinates' element={<Map />} />
           <Route path='/viewservices' element={<Services />} />
           <Route path='volunteerserv' element={<Volunteerservices/>}/>
+          <Route path='/compevents' element={<CompletedEvents/>} />
+          <Route path='/feedback/:id' element={<FeedbackReview/>} />
             {/* <Route path='/getmap' element={
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
               <Map />

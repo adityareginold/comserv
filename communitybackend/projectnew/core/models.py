@@ -44,6 +44,11 @@ class ImageText(models.Model):
     def upload_to(instance, filename):
         return 'images/{filename}'.format(filename=filename)
     
+class CompletedParticipation(models.Model):
+    image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Include other fields as needed
+    
 class Participation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
@@ -58,3 +63,12 @@ class Location(models.Model):
     image_text = models.ForeignKey(ImageText, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
+    
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    completed_participation = models.ForeignKey(CompletedParticipation, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    general_comments = models.TextField()
+    organization_feedback = models.TextField()
+    experience_feedback = models.TextField()
+    suggestions = models.TextField()

@@ -19,6 +19,7 @@ const NavBar = ({ searchKeyword, setSearchKeyword, handleSearch }) => {
     //     }
     // };
 
+
     return (
         <div>
             <nav class="navbar  navbar-expand-lg navbar-dark bg-dark">
@@ -41,21 +42,20 @@ const NavBar = ({ searchKeyword, setSearchKeyword, handleSearch }) => {
                         <div>
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
+                                    
                                     <Link class="nav-link active" aria-current="page" to="/login">Login</Link>
                                 </li>
-                                {/* 
-                                <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/db">testdashboard</Link>
+                                {/* <li className="nav-item">
+                                    <Link className="nav-link active" aria-current="page" to="/admin/" target="_blank">Admin Login</Link>
                                 </li> */}
+                               
                                 <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/register">Sign Up</Link>
                                 </li>
-                                {/* <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/map">View map testing</Link>
-                                </li> */}
-                                {/* <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/viewprofile">viewprofile</Link>
-                                </li> */}
+                                <li class="nav-item">
+                                    <Link class="nav-link active" aria-current="page" to="/feedback">feedback</Link>
+                                </li>
+    
 
                             </ul>
                         </div>

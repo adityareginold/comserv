@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/material": "^5.15.15",
     "@react-google-maps/api": "^2.19.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -23,6 +26,7 @@
     "react-geolocated": "^4.1.2",
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
+    "react-rating-stars-component": "^2.2.0",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

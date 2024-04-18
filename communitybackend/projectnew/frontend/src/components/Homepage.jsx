@@ -21,7 +21,7 @@ const Homepage = () => {
 
     const getData = () => {
         axios.get(`${API}/imagesfrom/?page=${currentPage}`)
-               .then((response) => {
+            .then((response) => {
                 console.log('API response:', response.data); // Log the API response
                 setData(response.data.results);
                 const itemsPerPage = response.data.results.length;
@@ -103,17 +103,31 @@ const Homepage = () => {
 
     return (
         <div>
-
             <NavBar searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} handleSearch={handleSearch} />
             <div className="container">
                 <div className="row">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                         <div className="row g-3">
+                            <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                <figure class="text-center">
+                                    <blockquote class="blockquote">
+                                        <p>“I alone cannot change the world, but I can cast a stone across the waters to create many ripples.” </p>
+                                    </blockquote>
+
+                                    <figcaption class="blockquote-footer">
+                                        <cite title="Source Title">Mother Teresa</cite>
+                                    </figcaption>
+                                </figure>
+                                {/* <p class="lead">
+                                    This is a lead paragraph. It stands out from regular paragraphs.
+                                </p> */}
+                            </div>
 
                             <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
 
                                 <div id="carouselExampleFade" class="carousel slide carousel-fade">
                                     <div class="carousel-inner">
+
                                         <div class="carousel-item active">
 
 
@@ -138,7 +152,7 @@ const Homepage = () => {
                                 </div>
 
                             </div>
-                            <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                            {/* <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                                 <p>filter</p>
                                 <p>Skills</p>
                                 <label>
@@ -153,7 +167,7 @@ const Homepage = () => {
                                     <input type="checkbox" name="skills" value="Food Donation" onChange={handleFilterChange} />
                                     Food Donation
                                 </label>
-                            </div>
+                            </div> */}
 
 
                             <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
@@ -167,9 +181,9 @@ const Homepage = () => {
                                     <option value="asc">Descending</option>
                                 </select>
                                 <p>Filter by Date Range</p>
-                                <input type="date"  name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
-                                <input type="date"  name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
-                                <button onClick={handleDateSortChange}>Apply</button>
+                                <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
+                                <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
+                                <button class="btn btn-dark" onClick={handleDateSortChange}>Apply</button>
                             </div>
 
                             <div className="row g-3" >

@@ -80,13 +80,13 @@ const Dashboard = () => {
                                                 {/* <Link to={`/moredetails/${value.id}`} class="btn btn-dark">More details</Link> */}
                                                 <button onClick={() => { setIsModalOpen(true); setSelectedCardId(value.id); }} class="btn btn-dark">More details</button>
 
-                                                <p>
+                                                {/* <p>
                                                     {value.likes} {value.likes === 1 ? "like" : "likes"}
-                                                </p>
+                                                </p> */}
 
 
 
-                                                <button className="btn btn-dark" onClick={() => updateLikes(value.id)}>Like</button>
+                                                {/* <button className="btn btn-dark" onClick={() => updateLikes(value.id)}>Like</button> */}
                                             </div>
                                         </div>
                                     </div>
