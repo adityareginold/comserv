@@ -55,6 +55,9 @@ urlpatterns = [
     path('deleteuserservices/<int:id>/' ,delete_user_participation, name='deleteuserservices'),
     path('participated/', ParticipateView.as_view(), name='participate'),
     path('feedback/<int:id>/', store_feedback, name='store_feedback'),
+    # path('participations/<int:user_id>/', get_participants_for_service_provider, name='get_participations_for_service_provider'),
+    path('getparticipants/', viewparticipants, name='completed_participation'),
+    path('feedback/', viewServiceProviderFeedback, name='view_feedback_reviews'),
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -66,8 +66,6 @@ class SearchSerializer(serializers.Serializer):
     keyword = serializers.CharField(max_length=100)
 
 
-
-
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
@@ -84,3 +82,20 @@ class FeedbackSerializer(serializers.ModelSerializer):
         # Create the Feedback instance
         feedback = Feedback.objects.create(user=user, completed_participation=completed_participation, **validated_data)
         return feedback
+    
+class DetailedParticipationSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    image_text = ImageSerializer(read_only=True)
+
+    class Meta:
+        model = Participation
+        fields = ['id', 'user', 'image_text']
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    completed_participation_id = serializers.IntegerField(source='completed_participation.id', read_only=True)
+    completed_participation = CompletedParticipationSerializer(read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = ['id', 'user', 'completed_participation', 'completed_participation_id', 'rating', 'comments']  # include the fields you need
+

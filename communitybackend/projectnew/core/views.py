@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404,render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer
+from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer,DetailedParticipationSerializer
 from .models import ImageText, Task, UserProfile,Location,Participation,CompletedParticipation,Feedback
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -18,19 +18,56 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import CreateAPIView
-
-
-
-
-
-
-from django.http import Http404
 from rest_framework.exceptions import ValidationError
 
-import logging
+
+
+        
+@api_view(['GET'])
+def viewServiceProviderFeedback(request):
+    try:
+        # Get the service provider's User from the request
+        user = request.user
+
+        # Get the ImageText instances uploaded by this service provider
+        image_texts = ImageText.objects.filter(user=user)
+
+        # Get the CompletedParticipation instances for these ImageText instances
+        participations = CompletedParticipation.objects.filter(image_text__in=image_texts)
+
+        # Get the Feedback instances for these participations
+        feedbacks = Feedback.objects.filter(completed_participation__in=participations)
+        feedbacks_serializer = FeedbackSerializer(feedbacks, many=True)
+
+        return Response(feedbacks_serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def viewparticipants(request):
+    try:
+        # Get the User from the request
+        user = request.user
+
+        # Get the ImageText instances for this user
+        image_texts = ImageText.objects.filter(user=user)
+
+        # Get the Participation instances for these services
+        participations = Participation.objects.filter(image_text__in=image_texts)
+        participations_serializer = DetailedParticipationSerializer(participations, many=True)
+
+        for participation in participations_serializer.data:
+            user_profile = UserProfile.objects.get(user_id=participation['user']['id'])
+            user_profile_serializer = UserProfileSerializer(user_profile)
+            participation['user']['profile'] = user_profile_serializer.data
+
+        return Response(participations_serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 logger = logging.getLogger(__name__)
-
 @api_view(['POST'])
 def store_feedback(request, id):
     try:
@@ -40,7 +77,8 @@ def store_feedback(request, id):
         # Get the CompletedParticipation with the given id
         completed_participation = get_object_or_404(CompletedParticipation, id=id)
         feedback_data['completed_participation'] = completed_participation.id
-
+        if Feedback.objects.filter(user=request.user, completed_participation=completed_participation).exists():
+            return Response({"message": "Feedback already given"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = FeedbackSerializer(data=feedback_data, context={'request': request, 'id': id})
         if serializer.is_valid(raise_exception=True):  # This will raise a ValidationError if the serializer is not valid
             feedback = serializer.save()

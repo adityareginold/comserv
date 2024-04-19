@@ -101,6 +101,7 @@ const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
                                 {option === 'Volunteer' && <Link to="/compevents" className="dropdown-item">Past Participation</Link>}
                                 {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}
                                 {option === 'Organization' && <Link to="/org" className="dropdown-item">Add Services</Link>}
+                                {option === 'Organization' && <Link to="/participants" className="dropdown-item">View volunteers</Link>}
                                 {option === 'Organization' && <Link to="/viewservices" className="dropdown-item">View Services</Link>}
 
                             </Dropdown.Menu>

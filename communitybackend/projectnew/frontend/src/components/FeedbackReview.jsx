@@ -33,6 +33,9 @@ const FeedbackReview = () => {
             .catch(error => {
                 console.error(error);
                 // handle error
+                if (error.response && error.response.data.message === 'Feedback already given') {
+                    window.alert('Feedback already given');
+                }
             });
     }
 
