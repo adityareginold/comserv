@@ -57,12 +57,9 @@ def password_reset_request(request):
     else:
         return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-# def password_reset_redirect(request, uidb64, token):
-#     # Construct the URL of your React app
-#     react_url = f'http://127.0.0.1:8000/resetpass/{uidb64}/{token}'
-
-#     # Redirect to your React app
-#     return HttpResponseRedirect(react_url)
+def password_reset_redirect(request, uidb64, token):
+    react_url = f'http://127.0.0.1:8000/resetredirect/{uidb64}/{token}'
+    return HttpResponseRedirect(react_url)
 
 @api_view(['POST'])
 def password_reset_confirm(request, uidb64, token):
@@ -433,7 +430,10 @@ class LoginView(APIView):
         
         if user.check_password(password):
             login(request, user)
-            return Response({"detail": "Successfully logged in."})
+            if user.is_superuser:
+                return Response({"detail": "Admin successfully logged in."})
+            else:
+                return Response({"detail": "Successfully logged in."})
         else:
             return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
 

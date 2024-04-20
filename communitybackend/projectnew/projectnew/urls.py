@@ -62,8 +62,9 @@ urlpatterns = [
     path('getparticipants/', viewparticipants, name='completed_participation'),
     path('feedback/', viewServiceProviderFeedback, name='view_feedback_reviews'),
     path('password_reset/', password_reset_request, name='password_reset'),
-    # path('resetredirect/<uidb64>/<token>/', password_reset_redirect, name='password_reset_redirect'),
+    path('resetr/<uidb64>/<token>/', password_reset_redirect, name='password_reset_redirect'),
     path('reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
+    
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -47,7 +47,7 @@ function App() {
           <Route path='/participants' element={<Participantsview/>}/>
           <Route path='/viewfeedback' element={<Viewfeedback/>}/>
           <Route path='/forgotpass' element={<Forgot />} />
-          <Route path='/resetpass/:uid/:token' element={ResetPassword} />
+          <Route path='/resetredirect/:uid/:token' element={<ResetPassword/>} />
             {/* <Route path='/getmap' element={
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
               <Map />
