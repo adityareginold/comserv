@@ -22,11 +22,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from core.views import *
+
 # from django.views.generic import TemplateView
 
 
 
 urlpatterns = [
+        # Catch-all pattern to serve your React app
+   
     path('admin/', admin.site.urls),
     path('', front, name = "front"),
     path('imagesfrom/', ImageTextListView.as_view()),
@@ -58,6 +61,9 @@ urlpatterns = [
     # path('participations/<int:user_id>/', get_participants_for_service_provider, name='get_participations_for_service_provider'),
     path('getparticipants/', viewparticipants, name='completed_participation'),
     path('feedback/', viewServiceProviderFeedback, name='view_feedback_reviews'),
+    path('password_reset/', password_reset_request, name='password_reset'),
+    # path('resetredirect/<uidb64>/<token>/', password_reset_redirect, name='password_reset_redirect'),
+    path('reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

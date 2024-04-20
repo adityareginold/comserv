@@ -52,11 +52,7 @@ const NavBar = ({ searchKeyword, setSearchKeyword, handleSearch }) => {
                                 <li class="nav-item">
                                     <Link class="nav-link active" aria-current="page" to="/register">Sign Up</Link>
                                 </li>
-                                <li class="nav-item">
-                                    <Link class="nav-link active" aria-current="page" to="/feedback">feedback</Link>
-                                </li>
-    
-
+                                
                             </ul>
                         </div>
                     </div>

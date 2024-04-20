@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../design/center.css';
 import NavBar3 from './NavBar3';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { API } from './config';
 
 
@@ -131,9 +131,9 @@ const Login = () => {
                                             <label htmlFor="floatingPassword">Password</label>
                                         </div>
                                         <p>
-                                            <a href="#" className="link-primary">
+                                            <Link to="/forgotpass" className="link-primary">
                                                 Forgot Password?
-                                            </a>
+                                            </Link>
                                         </p>
                                         <button onClick={handleLogin} className="btn btn-primary">
                                             Login

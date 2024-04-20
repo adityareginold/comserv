@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404,render
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer,DetailedParticipationSerializer
+from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer,DetailedParticipationSerializer,FeedbackReSerializer
 from .models import ImageText, Task, UserProfile,Location,Participation,CompletedParticipation,Feedback
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -12,17 +12,83 @@ from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-import logging
+import logging,time,base64,struct
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import CreateAPIView
 from rest_framework.exceptions import ValidationError
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from django.contrib.sites.shortcuts import get_current_site
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django_otp.oath import totp
+from django.http import HttpResponseRedirect
 
 
 
-        
+UserModel = get_user_model()
+@api_view(['POST'])
+def password_reset_request(request):
+    if request.method == "POST":
+        email = request.data.get('email')
+        user = UserModel.objects.filter(email=email).first()
+        if user:
+            token = default_token_generator.make_token(user)
+            device = TOTPDevice.objects.create(user=user, name='default')
+            key = base64.b32encode(struct.pack('>I', user.pk))  # Use user's primary key as secret key
+            otp_token = totp(key, digits=6, step=30)  # Generate a 6-digit OTP token
+            mail_subject = 'Password Reset Instruction'
+            message = render_to_string('password_reset_email.html', {
+                'user': user,
+                'domain': get_current_site(request).domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': token,
+                'otp_token': otp_token,
+            })
+            send_mail(mail_subject, message, 'adityareginold@gmail.com', [email])
+            return Response({"status": "Password reset email sent"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "No user found with this email address"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
+# def password_reset_redirect(request, uidb64, token):
+#     # Construct the URL of your React app
+#     react_url = f'http://127.0.0.1:8000/resetpass/{uidb64}/{token}'
+
+#     # Redirect to your React app
+#     return HttpResponseRedirect(react_url)
+
+@api_view(['POST'])
+def password_reset_confirm(request, uidb64, token):
+    if request.method == "POST":
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = UserModel.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            otp_token = request.data.get('otp_token')
+            new_password = request.data.get('new_password')
+            device = TOTPDevice.objects.filter(user=user, name='default').first()
+
+            if device.verify_token(otp_token):
+                user.set_password(new_password)
+                user.save()
+                return Response({"status": "Password has been reset"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+    
 @api_view(['GET'])
 def viewServiceProviderFeedback(request):
     try:
@@ -37,7 +103,7 @@ def viewServiceProviderFeedback(request):
 
         # Get the Feedback instances for these participations
         feedbacks = Feedback.objects.filter(completed_participation__in=participations)
-        feedbacks_serializer = FeedbackSerializer(feedbacks, many=True)
+        feedbacks_serializer = FeedbackReSerializer(feedbacks, many=True)
 
         return Response(feedbacks_serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -93,9 +159,12 @@ def store_feedback(request, id):
         logger.exception("An unexpected error occurred")
         return Response({"error": "An unexpected error occurred: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class ParticipateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
-        participations = Participation.objects.all()
+        participations = Participation.objects.filter(user=request.user)
 
         for participation in participations:
             if participation.image_text.enddate < timezone.now().date():
@@ -105,12 +174,11 @@ class ParticipateView(APIView):
                     # Set other fields as needed
                 )
                 participation.delete()
-              
 
-        completed_participations = CompletedParticipation.objects.all()
+        completed_participations = CompletedParticipation.objects.filter(user=request.user)
         serializer = CompletedParticipationSerializer(completed_participations, many=True)
         return Response(serializer.data)
-
+    
 @login_required
 @api_view(['GET'])
 def get_user_participations(request):

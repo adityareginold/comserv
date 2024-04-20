@@ -91,11 +91,10 @@ class DetailedParticipationSerializer(serializers.ModelSerializer):
         model = Participation
         fields = ['id', 'user', 'image_text']
 
-class FeedbackSerializer(serializers.ModelSerializer):
-    completed_participation_id = serializers.IntegerField(source='completed_participation.id', read_only=True)
+class FeedbackReSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     completed_participation = CompletedParticipationSerializer(read_only=True)
-
     class Meta:
         model = Feedback
-        fields = ['id', 'user', 'completed_participation', 'completed_participation_id', 'rating', 'comments']  # include the fields you need
+        fields = ['id', 'user','completed_participation','rating', 'general_comments', 'organization_feedback', 'experience_feedback', 'suggestions']
 

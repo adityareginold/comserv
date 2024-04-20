@@ -14,6 +14,9 @@ import Volunteerservices from './components/Volunteerservices';
 import CompletedEvents from './components/CompletedEvents';
 import FeedbackReview from './components/FeedbackReview';
 import Participantsview from './components/Participantsview';
+import Viewfeedback from './components/Viewfeedback';
+import Forgot from './components/Forgot';
+import ResetPassword from './components/ResetPassword';
 // rest of your code
 
 // import { LoadScript } from '@react-google-maps/api';
@@ -42,6 +45,9 @@ function App() {
           <Route path='/compevents' element={<CompletedEvents/>} />
           <Route path='/feedback/:id' element={<FeedbackReview/>} />
           <Route path='/participants' element={<Participantsview/>}/>
+          <Route path='/viewfeedback' element={<Viewfeedback/>}/>
+          <Route path='/forgotpass' element={<Forgot />} />
+          <Route path='/resetpass/:uid/:token' element={ResetPassword} />
             {/* <Route path='/getmap' element={
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
               <Map />
