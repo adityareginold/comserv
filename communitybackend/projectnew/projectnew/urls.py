@@ -64,6 +64,9 @@ urlpatterns = [
     path('password_reset/', password_reset_request, name='password_reset'),
     path('resetr/<uidb64>/<token>/', password_reset_redirect, name='password_reset_redirect'),
     path('reset/<uidb64>/<token>/', password_reset_confirm, name='password_reset_confirm'),
+    path('viewusers/', UserListView.as_view(), name='user-list'),
+     path('users/<int:pk>/', UserListView.as_view(), name='user-detail'),
+    path('is_superuser/', IsSuperUserView.as_view(), name='is-superuser'),
     
    ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

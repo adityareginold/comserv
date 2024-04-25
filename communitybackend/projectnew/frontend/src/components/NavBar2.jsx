@@ -13,13 +13,17 @@ const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
     const [username, setUsername] = useState('')
     const [profilePicture, setProfilePicture] = useState('');
     const [option, setOption] = useState('');
+    const [isSuperUser, setIsSuperUser] = useState(false);
 
     useEffect(() => {
         axios.get(`${API}/get_option/`).then
             (response => setOption(response.data.option));
     }, []);
 
-
+    useEffect(() => {
+        axios.get(`${API}/is_superuser/`)
+            .then(response => setIsSuperUser(response.data.is_superuser));
+    }, []);
 
     useEffect(() => {
         axios.get(`${API}/get_username/`).then
@@ -96,7 +100,7 @@ const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
                             <Dropdown.Menu>
                                 <Link to="/login" onClick={handleLogout} className="dropdown-item">Logout</Link>
                                 <Link to="/viewuser" className="dropdown-item">Profile</Link>
-                             
+                                {isSuperUser && <Link to="/viewusers" className="dropdown-item">View Users</Link>}
                                 {option === 'Volunteer' && <Link to="/volunteerserv" className="dropdown-item">My Services</Link>}
                                 {option === 'Volunteer' && <Link to="/compevents" className="dropdown-item">Past Participation</Link>}
                                 {/* <Link to="/org" className="dropdown-item">Add Services</Link> */}

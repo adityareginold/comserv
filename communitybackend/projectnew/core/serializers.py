@@ -14,10 +14,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer(read_only=True)
+    userprofile = UserProfileSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id','username', 'email', 'profile','first_name','last_name']
+        fields = ['id','username', 'email', 'userprofile','first_name','last_name']
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:

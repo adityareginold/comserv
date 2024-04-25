@@ -28,8 +28,32 @@ from django.contrib.sites.shortcuts import get_current_site
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.oath import totp
 from django.http import HttpResponseRedirect
+from rest_framework.permissions import IsAdminUser
 
 
+
+class IsSuperUserView(APIView):
+    def get(self, request):
+        is_superuser = request.user.is_superuser
+        return Response({'is_superuser': is_superuser})
+
+from django.http import Http404
+
+class UserListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        users = User.objects.select_related('userprofile').all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 UserModel = get_user_model()
 @api_view(['POST'])
