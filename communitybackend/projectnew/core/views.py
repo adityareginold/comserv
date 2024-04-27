@@ -31,6 +31,23 @@ from django.http import HttpResponseRedirect
 from rest_framework.permissions import IsAdminUser
 
 
+class ImageAdminView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        imagetexts = ImageText.objects.all()
+        serializer = ImageSerializer(imagetexts, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
+        try:
+            imagetext = ImageText.objects.get(pk=pk)
+        except ImageText.DoesNotExist:
+            raise Http404
+        imagetext.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    
 
 class IsSuperUserView(APIView):
     def get(self, request):
@@ -46,7 +63,7 @@ class UserListView(APIView):
         users = User.objects.select_related('userprofile').all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-
+ 
     def delete(self, request, pk, format=None):
         try:
             user = User.objects.get(pk=pk)

@@ -18,6 +18,7 @@ import Viewfeedback from './components/Viewfeedback';
 import Forgot from './components/Forgot';
 import ResetPassword from './components/ResetPassword';
 import ViewUsers from './components/ViewUsers';
+import ViewCards from './components/ViewCards';
 // rest of your code
 
 // import { LoadScript } from '@react-google-maps/api';
@@ -50,6 +51,7 @@ function App() {
           <Route path='/forgotpass' element={<Forgot />} />
           <Route path='/resetredirect/:uid/:token' element={<ResetPassword/>} />
           <Route path='/viewusers' element={<ViewUsers/>} />
+          <Route path='/viewcards' element={<ViewCards />} />
             {/* <Route path='/getmap' element={
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
               <Map />
