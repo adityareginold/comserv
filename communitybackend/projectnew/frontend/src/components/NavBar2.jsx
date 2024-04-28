@@ -58,7 +58,7 @@ const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
     return (
         <div>
 
-            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container-fluid">
                     <Link class="navbar-brand" href="#"><h5>CommunityService </h5></Link>
                     <Link class="navbar-brand" href="#"><h5>Welcome {username}</h5> </Link>

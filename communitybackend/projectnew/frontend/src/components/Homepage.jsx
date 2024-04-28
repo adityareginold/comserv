@@ -18,6 +18,10 @@ const Homepage = () => {
     const [endDate, setEndDate] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [skills, setSkills] = useState([]);
+    const [location, setLocation] = useState("");
+    const [title, setTitle] = useState("");
+
 
     const getData = () => {
         axios.get(`${API}/imagesfrom/?page=${currentPage}`)
@@ -48,39 +52,14 @@ const Homepage = () => {
     };
     const handleDateSortChange = () => {
         if (startDate && endDate) {
-            axios.get(`${API}/sort_images?startDate=${startDate}&endDate=${endDate}`)
+            axios.get(`${API}/filter?startDate=${startDate}&endDate=${endDate}&skills=${skills.join(',')}&location=${location}&title=${title}`)
                 .then((response) => {
                     setData(response.data);
                 });
         }
     };
 
-    const handleFilterChange = (event) => {
-        const { name, checked, value } = event.target;
-        setFilterCriteria(prevCriteria => {
-            let newCriteria;
-            if (Array.isArray(prevCriteria[name])) {
-                if (checked) {
-                    // If the checkbox is checked, add the value to the array
-                    newCriteria = { ...prevCriteria, [name]: [...prevCriteria[name], value] };
-                } else {
-                    // If the checkbox is unchecked, remove the value from the array
-                    newCriteria = { ...prevCriteria, [name]: prevCriteria[name].filter(item => item !== value) };
-                }
-            } else {
-                // If the checkbox is not part of an array, just set the value
-                newCriteria = { ...prevCriteria, [name]: checked ? value : null };
-            }
-
-            // Call the API with the new filter criteria
-            axios.get(`${API}/filter/`, { params: newCriteria })
-                .then((response) => {
-                    setData(response.data);
-                });
-
-            return newCriteria;
-        });
-    };
+ 
 
     const handleSearch = async (event) => {
         event.preventDefault();
@@ -171,19 +150,21 @@ const Homepage = () => {
 
 
                             <div className="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                                <p>Sort</p>
-                                <select name="sortField" value={sortField} onChange={(e) => { setSortField(e.target.value); handleSortChange(); }}>
+                                <p>Sort
+                                    {/* <select name="sortField" value={sortField} onChange={(e) => { setSortField(e.target.value); handleSortChange(); }}>
                                     <option value="title">Title</option>
-                                    {/* Add more options as needed */}
-                                </select>
-                                <select name="sortOrder" value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); handleSortChange(); }}>
-                                    <option value="desc">Ascending</option>
-                                    <option value="asc">Descending</option>
-                                </select>
-                                <p>Filter by Date Range</p>
-                                <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
-                                <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
-                                <button class="btn btn-dark" onClick={handleDateSortChange}>Apply</button>
+                                </select> */}
+                                    <select name="sortOrder" value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); handleSortChange(); }}>
+                                        <option value="desc">Ascending</option>
+                                        <option value="asc">Descending</option>
+                                    </select>
+                                    Filter by Date Range
+                                    <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
+                                    <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
+                                    <input type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="Location" />
+                                  
+                                        <button class="btn btn-dark" onClick={handleDateSortChange}>Apply</button>
+                                </p>
                             </div>
 
                             <div className="row g-3" >

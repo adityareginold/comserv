@@ -15,6 +15,13 @@ const Dashboard = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [data, setData] = new useState([])
     const [searchKeyword, setSearchKeyword] = useState('')
+    const [sortField, setSortField] = useState('title');
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [skills, setSkills] = useState([]);
+    const [location, setLocation] = useState("");
+    const [title, setTitle] = useState("");
 
 
       const getData = () => {
@@ -45,6 +52,24 @@ const Dashboard = () => {
             console.error('Failed to search:', error);
         }
     };
+
+
+    const handleSortChange = () => {
+        axios.get(`${API}/sort_images?sort=${sortField}&order=${sortOrder}`)
+            .then((response) => {
+                setData(response.data);
+            });
+    };
+    const handleDateSortChange = () => {
+        if (startDate && endDate) {
+            axios.get(`${API}/filter?startDate=${startDate}&endDate=${endDate}&skills=${skills.join(',')}&location=${location}&title=${title}`)
+                .then((response) => {
+                    setData(response.data);
+                });
+        }
+    };
+
+
     const updateLikes = id => {
         setData(prevData => {
             return prevData.map(item => {
@@ -66,6 +91,22 @@ const Dashboard = () => {
             <div className="container">
                 <div className="row g-3">
                     <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
+                                <p>Sort
+                                <select name="sortField" value={sortField} onChange={(e) => { setSortField(e.target.value); handleSortChange(); }}>
+                                    <option value="title">Title</option>
+                                    {/* Add more options as needed */}
+                                </select>
+                                <select name="sortOrder" value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); handleSortChange(); }}>
+                                    <option value="desc">Ascending</option>
+                                    <option value="asc">Descending</option>
+                                </select>
+                                Filter by Date Range
+                                <input type="date" name="startDate" value={startDate} onChange={(e) => { setStartDate(e.target.value); }} />
+                                <input type="date" name="endDate" value={endDate} min={startDate} onChange={(e) => { setEndDate(e.target.value); }} />
+                                <input type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="Location" />
+                                <button class="btn btn-dark" onClick={handleDateSortChange}>Apply</button></p>
+                            </div>
                         <div className="row g-3">
                             {
                                 data.map((value, index) => {

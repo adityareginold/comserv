@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import logging,time,base64,struct
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q,Subquery
 from django.utils import timezone
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import CreateAPIView
@@ -251,8 +251,10 @@ def filter_view(request):
     if start_date and end_date:
         queryset = queryset.filter(date__range=[start_date, end_date])
 
+    
     if location:
-        queryset = queryset.filter(location__icontains=location)
+        imagetext_ids = Location.objects.filter(name__icontains=location).values_list('image_text_id', flat=True)
+        queryset = queryset.filter(id__in=imagetext_ids)
 
     if skills:
         q_objects = Q()
