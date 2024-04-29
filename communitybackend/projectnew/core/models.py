@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from django.utils import timezone
+from datetime import timedelta
+
 
 # Create your models here.
 class Task(models.Model):
@@ -72,3 +75,14 @@ class Feedback(models.Model):
     organization_feedback = models.TextField()
     experience_feedback = models.TextField()
     suggestions = models.TextField()
+
+class OTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp_token = models.CharField(max_length=6)
+    otp_expiry = models.DateTimeField()
+    verified = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Set the expiry time to 2 minutes from now
+        self.otp_expiry = timezone.now() + timedelta(minutes=2)
+        super().save(*args, **kwargs)

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import ImageSerializer,UserSerializer,ParticipationSerializer, UserProfileSerializer,LocationSerializer,SearchSerializer,ParticipateSerializer,CompletedParticipationSerializer,FeedbackSerializer,DetailedParticipationSerializer,FeedbackReSerializer
-from .models import ImageText, Task, UserProfile,Location,Participation,CompletedParticipation,Feedback
+from .models import ImageText, Task, UserProfile,Location,Participation,CompletedParticipation,Feedback,OTP
 from rest_framework.views import APIView, status
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.http import JsonResponse,Http404
@@ -29,6 +29,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.oath import totp
 from django.http import HttpResponseRedirect
 from rest_framework.permissions import IsAdminUser
+from django.views.decorators.csrf import csrf_exempt
 
 
 class ImageAdminView(APIView):
@@ -58,7 +59,6 @@ from django.http import Http404
 
 class UserListView(APIView):
     permission_classes = [IsAdminUser]
-
     def get(self, request):
         users = User.objects.select_related('userprofile').all()
         serializer = UserSerializer(users, many=True)
@@ -72,43 +72,69 @@ class UserListView(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-UserModel = get_user_model()
+
 @api_view(['POST'])
 def password_reset_request(request):
     if request.method == "POST":
         email = request.data.get('email')
-        user = UserModel.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
         if user:
-            token = default_token_generator.make_token(user)
             device = TOTPDevice.objects.create(user=user, name='default')
             key = base64.b32encode(struct.pack('>I', user.pk))  # Use user's primary key as secret key
             otp_token = totp(key, digits=6, step=30)  # Generate a 6-digit OTP token
+            OTP.objects.create(user=user, otp_token=otp_token)  # Store the email in the OTP object
+
+            # Store the OTP in the user's session
+
             mail_subject = 'Password Reset Instruction'
             message = render_to_string('password_reset_email.html', {
                 'user': user,
                 'domain': get_current_site(request).domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': token,
                 'otp_token': otp_token,
             })
             send_mail(mail_subject, message, 'adityareginold@gmail.com', [email])
-            return Response({"status": "Password reset email sent"}, status=status.HTTP_200_OK)
+            return Response({"status": "Password reset email sent","otp_token": otp_token}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "No user found with this email address"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-def password_reset_redirect(request, uidb64, token):
-    react_url = f'http://127.0.0.1:8000/resetredirect/{uidb64}/{token}'
-    return HttpResponseRedirect(react_url)
+    
+logger = logging.getLogger(__name__)
+
+
+@api_view(['POST'])
+def verify_otp(request):
+    # if request.method == 'POST':
+        otp_token = request.data.get('otp_token')
+        email = request.data.get('email')  # Get the email from the POST data
+        print(otp_token, email)
+        logger.debug(f'otp_token: {otp_token}, email: {email}') 
+
+        if otp_token and email:
+            try:
+                otp = OTP.objects.get(user__email=email) 
+                 # Get the OTP object using the email
+                if otp.otp_token == otp_token: 
+                    otp.verified = True
+                    otp.save() # Check if the provided OTP matches the OTP in the database
+                    return JsonResponse({"status": "OTP verified"}, status=200)
+                else:
+                    return JsonResponse({"error": "Invalid OTP"}, status=400)
+            except OTP.DoesNotExist:
+                return JsonResponse({"error": "Invalid OTP or email"}, status=400)
+        else:
+            return JsonResponse({"error": "Missing OTP or email"}, status=400)
+    # else:
+    #     return JsonResponse({"error": "Invalid request"}, status=400)
 
 @api_view(['POST'])
 def password_reset_confirm(request, uidb64, token):
     if request.method == "POST":
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
-            user = UserModel.objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
         if user is not None and default_token_generator.check_token(user, token):
