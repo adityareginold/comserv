@@ -101,7 +101,6 @@ const Login = () => {
                             {isLoggedIn ? (
 
                                 <div>
-                                    {/* <p>Welcome, {username}!</p> */}
                                     <button onClick={handleLogout} className="btn btn-primary">
                                         Logout
                                     </button>

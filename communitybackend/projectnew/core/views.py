@@ -432,6 +432,7 @@ def get_user_profile(request):
     try:
         user_profile = UserProfile.objects.get(user_id=user_id)
         profile_picture_url = user_profile.image.url if user_profile.image else None
+        print(profile_picture_url)
         return JsonResponse({'profile_picture_url': profile_picture_url})
     except UserProfile.DoesNotExist:
         return JsonResponse({'error': 'User profile not found'}, status=404)
@@ -683,6 +684,8 @@ def update_services(request, pk):
 
 
 # Delete the services
+
+
 @api_view(['DELETE'])
 def delete_service(request, pk):
     try:
@@ -690,8 +693,11 @@ def delete_service(request, pk):
     except ImageText.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    # Check if there are any participations for this service
+    if Participation.objects.filter(image_text=image_text).exists():
+        return Response({'error': 'Users are already participating in this service, so it cannot be deleted.'}, status=status.HTTP_400_BAD_REQUEST)
+
     if request.method == 'DELETE':
         image_text.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 

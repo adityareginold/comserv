@@ -37,8 +37,8 @@ const Viewfeedback = () => {
                                     <th>End Date</th>
                                     <th>Rating</th>
                                     <th>General Comments</th>
-                                    <th>Organization Feedback</th>
-                                    <th>Experience Feedback</th>
+                                    <th>Feedback on organization</th>
+                                    <th>Feedback on experience</th>
                                     <th>Suggestions</th>
                                 </tr>
                             </thead>

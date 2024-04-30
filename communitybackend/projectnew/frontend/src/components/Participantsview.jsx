@@ -35,7 +35,7 @@ const Participantsview = () => {
                                     <th>Address</th>
                                     <th>Skill</th>
                                     <th>Interest</th>
-                                    <th>Title</th>
+                                    <th>Service</th>
                                     <th>Description</th>
                                     <th>Objectives</th>
                                     <th>Experience</th>

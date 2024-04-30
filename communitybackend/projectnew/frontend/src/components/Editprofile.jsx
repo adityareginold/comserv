@@ -86,7 +86,7 @@ const Editprofile = () => {
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                         <label htmlFor="" className="form-label">Email</label>
-                        <input type="text" className="form-control" name='email' value={input.email} onChange={inputHandler} />
+                        <input type="text" className="form-control" name='email' value={input.email} onChange={inputHandler} disabled />
                     </div>
                     <div className="col col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
                         <label htmlFor="" className="form-label">Address:</label>

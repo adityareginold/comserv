@@ -33,7 +33,7 @@ const NavBar2 = ({searchKeyword, setSearchKeyword, handleSearch}) => {
 
     useEffect(() => {
         axios.get(`${API}/profilepicture/`).then
-            (response => setProfilePicture(response.data.profilePicture));
+            (response => setProfilePicture(response.data.profile_picture_url));
     }, []);
     const handleLogout = () => {
         const csrftoken = Cookies.get('csrftoken');

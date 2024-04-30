@@ -60,6 +60,9 @@ const Services = () => {
                 })
                 .catch(error => {
                     console.error('Error deleting data: ', error);
+                    if (error.response && error.response.status === 400) {
+                        window.alert('Volunteer is already registered for this service');
+                    }
                 });
         }
     }
