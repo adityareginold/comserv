@@ -29,7 +29,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django_otp.oath import totp
 from django.http import HttpResponseRedirect
 from rest_framework.permissions import IsAdminUser
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
 
 
 class ImageAdminView(APIView):
@@ -128,30 +128,33 @@ def verify_otp(request):
     # else:
     #     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
+
 @api_view(['POST'])
-def password_reset_confirm(request, uidb64, token):
-    if request.method == "POST":
-        try:
-            uid = force_text(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-            user = None
+def confirm_password(request):
+    if request.method == 'POST':
+        email = request.data.get('email')
+        otp_token = request.data.get('otp_token')
+        new_password = request.data.get('new_password')
 
-        if user is not None and default_token_generator.check_token(user, token):
-            otp_token = request.data.get('otp_token')
-            new_password = request.data.get('new_password')
-            device = TOTPDevice.objects.filter(user=user, name='default').first()
-
-            if device.verify_token(otp_token):
-                user.set_password(new_password)
-                user.save()
-                return Response({"status": "Password has been reset"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+        if email and otp_token and new_password:
+            try:
+                otp = OTP.objects.get(user__email=email)
+                if otp.otp_token == otp_token and otp.verified:
+                    user = User.objects.get(email=email)
+                    user.password = make_password(new_password)
+                    user.save()
+                    return JsonResponse({"status": "Password updated successfully"}, status=200)
+                else:
+                    return JsonResponse({"error": "Invalid OTP or OTP not verified"}, status=400)
+            except OTP.DoesNotExist:
+                return JsonResponse({"error": "Invalid OTP or email"}, status=400)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "No user found with this email address"}, status=400)
         else:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error": "Missing email, OTP or new password"}, status=400)
     else:
-        return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"error": "Invalid request"}, status=400)
     
 @api_view(['GET'])
 def viewServiceProviderFeedback(request):
